@@ -1,0 +1,92 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties":
+    {
+        "ability-scores":
+        {
+            "type": "array",
+            "items":
+            [
+                {
+                    "type": "object",
+                    "properties":
+                    {
+                        "name":
+                        {
+                            "type": "string",
+                            "description": "The 'name' attribute of the ability-score"
+                        },
+                        "full_name":
+                        {
+                            "type": "string",
+                            "description": "The 'full_name' attribute of the ability-score"
+                        },
+                        "description":
+                        {
+                            "type": "string",
+                            "description": "The 'description' attribute of the ability-score, concatenated with a space delimiter"
+                        },
+                        "updated_at":
+                        {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The 'updated_at' attribute of the ability-score"
+                        },
+                        "skills":
+                        {
+                            "type": "array",
+                            "description": "An array of skills related to the ability-score",
+                            "items":
+                            [
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "name":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'name' attribute of the skill"
+                                        },
+                                        "description":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'description' attribute of the skill, concatenated with a space delimiter"
+                                        },
+                                        "updated_at":
+                                        {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "description": "The 'updated_at' attribute of the skill"
+                                        }
+                                    },
+                                    "additionalProperties": false,
+                                    "required":
+                                    [
+                                        "name",
+                                        "description",
+                                        "updated_at"
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required":
+                    [
+                        "name",
+                        "full_name",
+                        "description",
+                        "updated_at",
+                        "skills"
+                    ]
+                }
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "required":
+    [
+        "ability-scores"
+    ]
+}
