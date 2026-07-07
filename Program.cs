@@ -13,7 +13,7 @@ namespace DndParser
             // Schema Validator URL: https://www.jsonschemavalidator.net/
 
             Console.WriteLine("Beginning DnD Parser");
-            await Parser.StartParser();
+            await Parser.StartParser(0);
         }
     }
 }

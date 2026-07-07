@@ -1,7 +1,10 @@
 using System.Text.Json.Serialization;
 namespace DndParser
 {
-    // Depending on how this were to grow, SchemaRoot may include other Lists of DTOs
+    // --------------------------------
+    //	    ABILITY-SCORE DTOs
+    // --------------------------------
+    #region Ability-Score DTOs
     public class SchemaRootDTO
     {
         [JsonPropertyName("ability-scores")] 
@@ -13,7 +16,7 @@ namespace DndParser
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("full_name")] public string FullName { get; set; } = string.Empty;
         [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
-        [JsonPropertyName("updated_at")] public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
         [JsonPropertyName("skills")] public List<SchemaSkillDTO> Skills { get; set; } = new();
 
     }
@@ -22,6 +25,7 @@ namespace DndParser
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
-        [JsonPropertyName("updated_at")] public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
+    #endregion
 }

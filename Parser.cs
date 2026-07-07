@@ -14,29 +14,88 @@ namespace DndParser
         public const string apiYear2014 = "/api/2014/";
         public const string apiYear2024 = "/api/2024/";
 
-        public static async Task StartParser()
+        public static async Task StartParser(int categoryIndex = -1)
         {
             // If there were more than one step to this parser, it would be included sequentially here
             // I'm hardcoding in the starting point for the ability scores, but this could easily be configured and sent in as an additional parameter
             
-            // Missing Categories for 2014:
+            // Known Missing Categories for 2014:
             // - Backgrounds (1)
             // - Feats (1)
 
-            // Missing Categories for 2024:
+            // Known Missing Categories for 2024:
             // - Backgrounds (4)
+            // - Levels (0)
             // - Monsters (3)
             // - Rule-sections (0)
             // - Rules (0)
             // - Spells (0)
 
-            await TryParseAbilityScores();
+            CategoryDTO categoryDTO = await GetSpecificDTOAtUrl<CategoryDTO>(apiYear2014);
+            await TryParseAbilityScores(categoryDTO.AbilityScores);
+
+            // ResultsDTO results_alignments = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Alignments);
+            // ResultsDTO results_backgrounds = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
+            // ResultsDTO results_classes = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Classes);
+            // ResultsDTO results_conditions = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Conditions);
+            // ResultsDTO results_damageTypes = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.DamageTypes);
+            // ResultsDTO results_equipment = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Equipment);
+            // ResultsDTO results_equipmentCategories = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.EquipmentCategories);
+            // ResultsDTO results_feats = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Feats);
+            // ResultsDTO results_features = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Features);
+            // ResultsDTO results_languages = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Languages);
+            // ResultsDTO results_magicItems = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.MagicItems);
+            // ResultsDTO results_magicSchools = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.MagicSchools);
+            // ResultsDTO results_monsters = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Monsters);
+            // ResultsDTO results_proficiencies = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Proficiencies);
+            // ResultsDTO results_races = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Races);
+            // ResultsDTO results_ruleSections = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.RuleSections);
+            // ResultsDTO results_rules = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Rules);
+            // ResultsDTO results_skills = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Skills);
+            // ResultsDTO results_spells = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Spells);
+            // ResultsDTO results_subclasses = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subclasses);
+            // ResultsDTO results_subraces = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subraces);
+            // ResultsDTO results_traits = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Traits);
+            // ResultsDTO results_weaponProperties = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.WeaponProperties);
+
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Alignments);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Classes);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Conditions);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.DamageTypes);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Equipment);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.EquipmentCategories);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Feats);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Features);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Languages);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.MagicItems);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.MagicSchools);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Monsters);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Proficiencies);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Races);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.RuleSections);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Rules);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Skills);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Spells);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subclasses);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subraces);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Traits);
+            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.WeaponProperties);
+
+            // ResultsDTO focusDTO = results_alignments;
+
+            // foreach(UrlDTO urlObj in focusDTO.Results)
+            // {
+            //     Console.WriteLine($"Results: {urlObj.Name}");
+            // }
+
         }
 
-        public static async Task TryParseAll()
+        // This might be rate locked
+        public static async Task TryParseAll(CategoryDTO categoryDTO)
         {
             List<Task> tasks = new List<Task> {
-                TryParseAbilityScores()
+                TryParseAbilityScores(categoryDTO.AbilityScores)
             };
             await Task.WhenAll(tasks);
         }
@@ -51,17 +110,17 @@ namespace DndParser
         /// </summary>
         /// <param name="client"></param>
         /// <returns></returns>
-        private static async Task TryParseAbilityScores(string abilityScoresUrl = "/api/2014/ability-scores")
+        private static async Task TryParseAbilityScores(string abilityScoresUrl)
         {
             try
             {
                 // Import DTOs for later mapping
-                List<GeneralInfoDTO> abilityScoreGeneralDTOs = new();
+                List<UrlDTO> abilityScoreGeneralDTOs = new();
                 List<AbilityScoreDTO> abilityScoreDTOs = new();
-                List<SkillDTO> skillDTOs = new();
+                List<DescriptionDTO> skillDTOs = new();
 
                 // Get initial list of scores
-                ResultsDTO resultsDTO = await GetResultsDTO(abilityScoresUrl);
+                ResultsDTO resultsDTO = await GetSpecificDTOAtUrl<ResultsDTO>(abilityScoresUrl);
 
                 // Load and store the full score details
                 await AddAbilityScores(resultsDTO.Results, abilityScoreDTOs);
@@ -92,22 +151,25 @@ namespace DndParser
         /// <param name="client"></param>
         /// <param name="abilityScoreGeneralDTOs"></param>
         /// /// <param name="abilityScoreDTOs"></param>
-        private static async Task AddAbilityScores(List<GeneralInfoDTO> abilityScoreGeneralDTOs, List<AbilityScoreDTO> abilityScoreDTOs)
+        private static async Task AddAbilityScores(List<UrlDTO> abilityScoreGeneralDTOs, List<AbilityScoreDTO> abilityScoreDTOs)
         {
-            foreach(GeneralInfoDTO abilityScoreSmall in abilityScoreGeneralDTOs)
+            foreach(UrlDTO abilityScoreSmall in abilityScoreGeneralDTOs)
             {
-                string response = await WebClient.GetDataAtURL(dndBaseUrl, abilityScoreSmall.Url);
+                // string response = await WebClient.GetDataAtURL(dndBaseUrl, abilityScoreSmall.Url);
 
-                if(response == string.Empty)
-                {
-                    Console.WriteLine("No Response from Client. Attempting next Iteration");
-                    continue;
-                }
+                // if(response == string.Empty)
+                // {
+                //     Console.WriteLine("No Response from Client. Attempting next Iteration");
+                //     continue;
+                // }
 
-                // PrintDTOData("AbilityScores: " + response);
+                // // PrintDTOData("AbilityScores: " + response);
 
-                // Store the score details per ability score
-                AbilityScoreDTO? newAbilityScoreDTO = JsonSerializer.Deserialize<AbilityScoreDTO>(response);
+                // // Store the score details per ability score
+                // AbilityScoreDTO? newAbilityScoreDTO = JsonSerializer.Deserialize<AbilityScoreDTO>(response);
+
+                AbilityScoreDTO? newAbilityScoreDTO = await GetSpecificDTOAtUrl<AbilityScoreDTO>(abilityScoreSmall.Url);
+
                 abilityScoreDTOs.Add(newAbilityScoreDTO);
 
             }
@@ -119,11 +181,11 @@ namespace DndParser
         /// <param name="client"></param>
         /// <param name="abilityScoreDTOs"></param>
         /// <param name="skillDTOs"></param>
-        private static async Task AddSkills(List<AbilityScoreDTO> abilityScoreDTOs, List<SkillDTO> skillDTOs)
+        private static async Task AddSkills(List<AbilityScoreDTO> abilityScoreDTOs, List<DescriptionDTO> skillDTOs)
         {
             foreach(AbilityScoreDTO scoreDTO in abilityScoreDTOs)
             {
-                foreach(GeneralInfoDTO skillGeneralDTO in scoreDTO.Skills)
+                foreach(UrlDTO skillGeneralDTO in scoreDTO.Skills)
                 {
                     if(skillGeneralDTO.Url == string.Empty)
                     {
@@ -141,7 +203,7 @@ namespace DndParser
 
                     // PrintDTOData("Skill Info: " + response);
 
-                    SkillDTO? newSkillDTO = JsonSerializer.Deserialize<SkillDTO>(response);
+                    DescriptionDTO? newSkillDTO = JsonSerializer.Deserialize<DescriptionDTO>(response);
 
                     skillDTOs.Add(newSkillDTO);
                 }
@@ -161,7 +223,7 @@ namespace DndParser
         /// </summary>
         /// <param name="scores"></param>
         /// <param name="skills"></param>
-        private static SchemaRootDTO MapToSchemaDTOs_AbilityScores(List<AbilityScoreDTO> scores, List<SkillDTO> skills)
+        private static SchemaRootDTO MapToSchemaDTOs_AbilityScores(List<AbilityScoreDTO> scores, List<DescriptionDTO> skills)
         {
             SchemaRootDTO exportDTO = new();
 
@@ -193,7 +255,7 @@ namespace DndParser
 
                 // Creating and adding proper skill objects
                 newAbility.Skills = new();
-                foreach(SkillDTO skillDetail in abScoreDTO.SkillsDetailed)
+                foreach(DescriptionDTO skillDetail in abScoreDTO.SkillsDetailed)
                 {                    
                     SchemaSkillDTO newSkill = new();
                     newSkill.Name = skillDetail.Name;
@@ -215,17 +277,17 @@ namespace DndParser
 	    // --------------------------------
         #region UniversalFunctions
 
-        private static async Task<ResultsDTO> GetResultsDTO(string categoryUrl)
+        private static async Task<T> GetSpecificDTOAtUrl<T>(string url)
         {
-            string response = await WebClient.GetDataAtURL(dndBaseUrl, categoryUrl);
+            string response = await WebClient.GetDataAtURL(dndBaseUrl, url);
 
             if(response == string.Empty)
             {
                 Console.WriteLine($"No Initial Response Found from Client");
-                return null;
+                return default(T);
             }
 
-            return JsonSerializer.Deserialize<ResultsDTO>(response);
+            return JsonSerializer.Deserialize<T>(response);
         }
 
         #endregion

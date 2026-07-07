@@ -1,17 +1,75 @@
 using System.Text.Json.Serialization;
 namespace DndParser
 {
+
+    // --------------------------------
+    //	    GENERALIZED DTOs
+    // --------------------------------
+    #region Generalized DTOs
+
     public class ResultsDTO
     {
-        [JsonPropertyName("results")] public List<GeneralInfoDTO> Results { get; set; } = new();
+        [JsonPropertyName("results")] public List<UrlDTO> Results { get; set; } = new();
     }
 
-    public class GeneralInfoDTO
+    public class UrlDTO
     {
-        [JsonPropertyName("name")] public string Name {get; set; } = string.Empty;
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
+        [JsonPropertyName("name")] public string Name {get; set; } = string.Empty;
         [JsonPropertyName("url")] public string Url { get; set; } = string.Empty;
     }
+
+    public class DescriptionDTO
+    {
+        [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("desc")] public string[] Desc { get; set; }
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+    }
+
+    #endregion
+
+    // --------------------------------
+    //	    VERSION-SPECIFIC DTOs
+    // --------------------------------
+    #region Version-Specific DTOs
+
+    public class CategoryDTO
+    {
+        [JsonPropertyName("ability-scores")] public string AbilityScores { get; set; } = string.Empty;
+        [JsonPropertyName("alignments")] public string Alignments { get; set; } = string.Empty;
+        [JsonPropertyName("backgrounds")] public string Backgrounds { get; set; } = string.Empty;
+        [JsonPropertyName("classes")] public string Classes { get; set; } = string.Empty;
+        [JsonPropertyName("conditions")] public string Conditions { get; set; } = string.Empty;
+        [JsonPropertyName("damage-types")] public string DamageTypes { get; set; } = string.Empty;
+        [JsonPropertyName("equipment")] public string Equipment { get; set; } = string.Empty;
+        [JsonPropertyName("equipment-categories")] public string EquipmentCategories { get; set; } = string.Empty;
+        [JsonPropertyName("feats")] public string Feats { get; set; } = string.Empty;
+        [JsonPropertyName("features")] public string Features { get; set; } = string.Empty;
+        [JsonPropertyName("languages")] public string Languages { get; set; } = string.Empty;
+        [JsonPropertyName("magic-items")] public string MagicItems { get; set; } = string.Empty;
+        [JsonPropertyName("magic-schools")] public string MagicSchools { get; set; } = string.Empty;
+        [JsonPropertyName("monsters")] public string Monsters { get; set; } = string.Empty;
+        [JsonPropertyName("proficiencies")] public string Proficiencies { get; set; } = string.Empty;
+        [JsonPropertyName("races")] public string Races { get; set; } = string.Empty;
+        [JsonPropertyName("rule-sections")] public string RuleSections { get; set; } = string.Empty;
+        [JsonPropertyName("rules")] public string Rules { get; set; } = string.Empty;
+        [JsonPropertyName("skills")] public string Skills { get; set; } = string.Empty;
+        [JsonPropertyName("spells")] public string Spells { get; set; } = string.Empty;
+        [JsonPropertyName("subclasses")] public string Subclasses { get; set; } = string.Empty;
+        [JsonPropertyName("subraces")] public string Subraces { get; set; } = string.Empty;
+        [JsonPropertyName("traits")] public string Traits { get; set; } = string.Empty;
+        [JsonPropertyName("weapon-properties")] public string WeaponProperties { get; set; } = string.Empty;
+    
+
+    }
+
+    #endregion
+
+    // --------------------------------
+    //	    CATEGORY-SPECIFIC DTOs
+    // --------------------------------
+    #region Category-Specific DTOs
 
     public class AbilityScoreDTO
     {
@@ -19,17 +77,11 @@ namespace DndParser
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("full_name")] public string FullName { get; set; } = string.Empty;
         [JsonPropertyName("desc")] public string[] Desc { get; set; }
-        [JsonPropertyName("skills")] public List<GeneralInfoDTO> Skills { get; set; } = new();
-        [JsonPropertyName("skillsDetailed")] public List<SkillDTO> SkillsDetailed { get; set; } = new();
+        [JsonPropertyName("skills")] public List<UrlDTO> Skills { get; set; } = new();
+        [JsonPropertyName("skillsDetailed")] public List<DescriptionDTO> SkillsDetailed { get; set; } = new();
         [JsonPropertyName("url")] public string Url { get; set; } = string.Empty;
-        [JsonPropertyName("updated_at")] public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
-    public class SkillDTO
-    {
-        [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
-        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
-        [JsonPropertyName("desc")] public string[] Desc { get; set; }
-        [JsonPropertyName("updated_at")] public DateTime UpdatedAt { get; set; }
-    }
+    #endregion
 }
