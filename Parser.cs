@@ -3,7 +3,6 @@
 // (Ability Scores vs. Races vs. Classes etc.) having their own files.
 
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace DndParser
 {
@@ -32,7 +31,8 @@ namespace DndParser
             // - Spells (0)
 
             CategoryDTO categoryDTO = await GetSpecificDTOAtUrl<CategoryDTO>(apiYear2014);
-            await TryParseAbilityScores(categoryDTO.AbilityScores);
+            // await TryParseAbilityScores(categoryDTO.AbilityScores);
+            await TryParseSkills(categoryDTO.Skills);
 
             // ResultsDTO results_alignments = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Alignments);
             // ResultsDTO results_backgrounds = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
@@ -51,7 +51,6 @@ namespace DndParser
             // ResultsDTO results_races = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Races);
             // ResultsDTO results_ruleSections = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.RuleSections);
             // ResultsDTO results_rules = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Rules);
-            // ResultsDTO results_skills = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Skills);
             // ResultsDTO results_spells = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Spells);
             // ResultsDTO results_subclasses = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subclasses);
             // ResultsDTO results_subraces = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subraces);
@@ -115,9 +114,7 @@ namespace DndParser
             try
             {
                 // Import DTOs for later mapping
-                List<UrlDTO> abilityScoreGeneralDTOs = new();
                 List<AbilityScoreDTO> abilityScoreDTOs = new();
-                List<DescriptionDTO> skillDTOs = new();
 
                 // Get initial list of scores
                 ResultsDTO resultsDTO = await GetSpecificDTOAtUrl<ResultsDTO>(abilityScoresUrl);
@@ -126,18 +123,13 @@ namespace DndParser
                 await AddAbilityScores(resultsDTO.Results, abilityScoreDTOs);
 
                 // Load and store all skill details
-                await AddSkills(abilityScoreDTOs, skillDTOs);
+                await AddAbilityScoreSkills(abilityScoreDTOs);
 
                 // Map to Schema
-                SchemaRootDTO exportDTO = MapToSchemaDTOs_AbilityScores(abilityScoreDTOs, skillDTOs);
+                SchemaRoot_AbilityScoreDTO exportDTO = MapToSchemaDTOs_AbilityScores(abilityScoreDTOs);
                 
-                // Prepare to Print
-                JsonSerializerOptions jsonOptions = new JsonSerializerOptions { WriteIndented = true };
-                string jsonOutput = JsonSerializer.Serialize(exportDTO, jsonOptions);
-
-                Console.WriteLine("\nFinal Payload:");
-                Console.WriteLine(jsonOutput);
-
+                // Prepare to Print                
+                ExportData(exportDTO);
             }
             catch(Exception exception)
             {
@@ -149,29 +141,14 @@ namespace DndParser
         /// Loads in ability score details based on info from smaller input DTOs, serializes and adds them to list of the more detailed abilityScoreDTOs
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="abilityScoreGeneralDTOs"></param>
+        /// <param name="abilityScoreUrlDTOs"></param>
         /// /// <param name="abilityScoreDTOs"></param>
-        private static async Task AddAbilityScores(List<UrlDTO> abilityScoreGeneralDTOs, List<AbilityScoreDTO> abilityScoreDTOs)
+        private static async Task AddAbilityScores(List<UrlDTO> abilityScoreUrlDTOs, List<AbilityScoreDTO> abilityScoreDTOs)
         {
-            foreach(UrlDTO abilityScoreSmall in abilityScoreGeneralDTOs)
+            foreach(UrlDTO abilityScoreUrlDTO in abilityScoreUrlDTOs)
             {
-                // string response = await WebClient.GetDataAtURL(dndBaseUrl, abilityScoreSmall.Url);
-
-                // if(response == string.Empty)
-                // {
-                //     Console.WriteLine("No Response from Client. Attempting next Iteration");
-                //     continue;
-                // }
-
-                // // PrintDTOData("AbilityScores: " + response);
-
-                // // Store the score details per ability score
-                // AbilityScoreDTO? newAbilityScoreDTO = JsonSerializer.Deserialize<AbilityScoreDTO>(response);
-
-                AbilityScoreDTO? newAbilityScoreDTO = await GetSpecificDTOAtUrl<AbilityScoreDTO>(abilityScoreSmall.Url);
-
+                AbilityScoreDTO? newAbilityScoreDTO = await GetSpecificDTOAtUrl<AbilityScoreDTO>(abilityScoreUrlDTO.Url);
                 abilityScoreDTOs.Add(newAbilityScoreDTO);
-
             }
         }
 
@@ -181,7 +158,7 @@ namespace DndParser
         /// <param name="client"></param>
         /// <param name="abilityScoreDTOs"></param>
         /// <param name="skillDTOs"></param>
-        private static async Task AddSkills(List<AbilityScoreDTO> abilityScoreDTOs, List<DescriptionDTO> skillDTOs)
+        private static async Task AddAbilityScoreSkills(List<AbilityScoreDTO> abilityScoreDTOs)
         {
             foreach(AbilityScoreDTO scoreDTO in abilityScoreDTOs)
             {
@@ -193,20 +170,53 @@ namespace DndParser
                         continue;
                     }
 
-                    string response = await WebClient.GetDataAtURL(dndBaseUrl, skillGeneralDTO.Url);
-
-                    if(response == string.Empty)
-                    {
-                        Console.WriteLine("No Response from Client. Attempting next Iteration");
-                        continue;
-                    }
-
-                    // PrintDTOData("Skill Info: " + response);
-
-                    DescriptionDTO? newSkillDTO = JsonSerializer.Deserialize<DescriptionDTO>(response);
-
-                    skillDTOs.Add(newSkillDTO);
+                    DescriptionDTO? newSkillDTO = await GetSpecificDTOAtUrl<DescriptionDTO>(skillGeneralDTO.Url);
+                    scoreDTO.SkillsDetailed.Add(newSkillDTO);
                 }
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //	    PARSE - SKILLS
+	    // --------------------------------
+        #region Parse_Skills
+
+        private static async Task TryParseSkills(string skillsUrl)
+        {
+            try
+            {
+                List<SkillDTO> skillDTOs = new();
+
+                ResultsDTO results_skills = await GetSpecificDTOAtUrl<ResultsDTO>(skillsUrl);
+                await AddSkills(results_skills.Results, skillDTOs);
+                await AddSkillAbilityScore(skillDTOs);
+
+                SchemaRoot_SkillDTO exportDTO = MapToSchemaDTOs_Skills(skillDTOs);
+                ExportData(exportDTO);
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        private static async Task AddSkills(List<UrlDTO> skillUrlDTOs, List<SkillDTO> skillDTOs)
+        {
+            foreach(UrlDTO skillUrlDTO in skillUrlDTOs)
+            {
+                SkillDTO? skillDTO = await GetSpecificDTOAtUrl<SkillDTO>(skillUrlDTO.Url);
+                skillDTOs.Add(skillDTO);
+            }
+        }
+
+        private static async Task AddSkillAbilityScore(List<SkillDTO> skillDTOs)
+        {
+            foreach(SkillDTO skillDTO in skillDTOs)
+            {
+                DescriptionDTO? descriptionDTO = await GetSpecificDTOAtUrl<DescriptionDTO>(skillDTO.AbilityScore.Url);
+                skillDTO.AbilityScoreDetailed = descriptionDTO;
             }
         }
 
@@ -223,22 +233,9 @@ namespace DndParser
         /// </summary>
         /// <param name="scores"></param>
         /// <param name="skills"></param>
-        private static SchemaRootDTO MapToSchemaDTOs_AbilityScores(List<AbilityScoreDTO> scores, List<DescriptionDTO> skills)
+        private static SchemaRoot_AbilityScoreDTO MapToSchemaDTOs_AbilityScores(List<AbilityScoreDTO> scores)
         {
-            SchemaRootDTO exportDTO = new();
-
-            // If Scores and Skills are unsorted, then the skills list will be populated with skill details in an order relative to the ability score list, since that's how they were loaded in originally.
-            // This means that the first subset of skills in the list will be Deception, Intimidation, Performance, and Persuasion, because the first ability score will be Charisma, and so on.
-            // This means that the list of skill GeneralDTOs on each ability score DTO, when put together, will be the same length and order of the list of Skills
-            // This allows us to distribute the list of SkillDTOs to their assigned ability score without running a triple loop
-            foreach(AbilityScoreDTO abScore in scores)
-            {
-                for(int index = 0; index < abScore.Skills.Count; index++)
-                {
-                    abScore.SkillsDetailed.Add(skills[index]);
-                }
-                skills.RemoveRange(0, abScore.Skills.Count);
-            }
+            SchemaRoot_AbilityScoreDTO exportDTO = new();
 
             foreach(AbilityScoreDTO abScoreDTO in scores)
             {
@@ -257,7 +254,7 @@ namespace DndParser
                 newAbility.Skills = new();
                 foreach(DescriptionDTO skillDetail in abScoreDTO.SkillsDetailed)
                 {                    
-                    SchemaSkillDTO newSkill = new();
+                    SchemaDescriptionDTO newSkill = new();
                     newSkill.Name = skillDetail.Name;
                     newSkill.UpdatedAt = skillDetail.UpdatedAt;
 
@@ -270,6 +267,29 @@ namespace DndParser
             return exportDTO;
         }
         
+        private static SchemaRoot_SkillDTO MapToSchemaDTOs_Skills(List<SkillDTO> skills)
+        {
+            SchemaRoot_SkillDTO exportDTO = new();
+
+            foreach(SkillDTO skillDTO in skills)
+            {
+                SchemaSkillDTO newSkill = new();
+                newSkill.Name = skillDTO.Name;
+                newSkill.UpdatedAt = skillDTO.UpdatedAt;
+
+                newSkill.Description = string.Join(" ", skillDTO.Desc);
+
+                newSkill.AbilityScore.Name = skillDTO.AbilityScoreDetailed.Name;
+                newSkill.AbilityScore.FullName = skillDTO.AbilityScoreDetailed.FullName;
+                newSkill.AbilityScore.UpdatedAt = skillDTO.AbilityScoreDetailed.UpdatedAt;
+                newSkill.AbilityScore.Description = string.Join(" ", skillDTO.AbilityScoreDetailed.Desc);
+
+                exportDTO.Skills.Add(newSkill);
+            }
+
+            return exportDTO;
+        }
+
         #endregion
         
         // --------------------------------
@@ -288,6 +308,15 @@ namespace DndParser
             }
 
             return JsonSerializer.Deserialize<T>(response);
+        }
+
+        private static void ExportData<T>(T exportDTO)
+        {
+            JsonSerializerOptions jsonOptions = new JsonSerializerOptions { WriteIndented = true };
+            string jsonOutput = JsonSerializer.Serialize(exportDTO, jsonOptions);
+
+            Console.WriteLine("\nFinal Payload:");
+            Console.WriteLine(jsonOutput);
         }
 
         #endregion
