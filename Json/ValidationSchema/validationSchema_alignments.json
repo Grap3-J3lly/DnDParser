@@ -1,0 +1,54 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties":
+    {
+        "alignments":
+        {
+            "type": "array",
+            "items":
+            [
+                {
+                    "type": "object",
+                    "properties":
+                    {
+                        "name":
+                        {
+                            "type": "string",
+                            "description": "The 'name' attribute of the alignment"
+                        },
+                        "abbreviation":
+                        {
+                            "type":"string",
+                            "description": "The 'abbreviation' attribute of the alignment"
+                        },
+                        "description":
+                        {
+                            "type": "string",
+                            "description": "The 'description' attribute of the alignment"
+                        },
+                        "updated_at":
+                        {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The 'updated_at' attribute of the alignment"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required":
+                    [
+                        "name",
+                        "abbreviation",
+                        "description",
+                        "updated_at"
+                    ]
+                }
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "required":
+    [
+        "alignments"
+    ]
+}

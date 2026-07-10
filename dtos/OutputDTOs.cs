@@ -41,6 +41,26 @@ namespace DndParser
     #endregion
 
     // --------------------------------
+    //	    ALIGNMENT DTOs
+    // --------------------------------
+    #region Alignment DTOs
+
+    public class SchemaRoot_AlignmentDTO
+    {
+        [JsonPropertyName("alignments")] public List<SchemaAlignmentDTO> Alignments { get; set; } = new();
+    }
+
+    public class SchemaAlignmentDTO
+    {
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("abbreviation")] public string Abbreviation { get; set; } = string.Empty;
+        [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+    }
+
+    #endregion
+
+    // --------------------------------
     //	    SKILL DTOs
     // --------------------------------
     #region Skill DTOs

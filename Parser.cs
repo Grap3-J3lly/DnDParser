@@ -31,10 +31,31 @@ namespace DndParser
             // - Spells (0)
 
             CategoryDTO categoryDTO = await GetSpecificDTOAtUrl<CategoryDTO>(apiYear2014);
-            // await TryParseAbilityScores(categoryDTO.AbilityScores);
-            await TryParseSkills(categoryDTO.Skills);
+            // await TryParseAbilityScores(categoryDTO.AbilityScores); // ---DONE--- //
+            // await TryParseAlignments(categoryDTO.Alignments); // ---DONE--- //
+            // await TryParseBackgrounds(categoryDTO.Backgrounds);
+            // await TryParseClasses(categoryDTO.Classes);
+            // await TryParseConditions(categoryDTO.Conditions);
+            // await TryParseDamageTypes(categoryDTO.DamageTypes);
+            // await TryParseEquipment(categoryDTO.Equipment);
+            // await TryParseEquipmentCategories(categoryDTO.EquipmentCategories);
+            // await TryParseFeats(categoryDTO.Feats);
+            // await TryParseFeatures(categoryDTO.Features);
+            // await TryParseLanguages(categoryDTO.Languages);
+            // await TryParseMagicItems(categoryDTO.MagicItems);
+            // await TryParseMagicSchools(categoryDTO.MagicSchools);
+            // await TryParseMonsters(categoryDTO.Monsters);
+            // await TryParseProficiencies(categoryDTO.Proficiencies);
+            // await TryParseRaces(categoryDTO.Races);
+            // await TryParseRuleSections(categoryDTO.RuleSections);
+            // await TryParseRules(categoryDTO.Rules);
+            // await TryParseSkills(categoryDTO.Skills); // ---DONE--- //
+            // await TryParseSpells(categoryDTO.Spells);
+            // await TryParseSubclasses(categoryDTO.Subclasses);
+            // await TryParseSubraces(categoryDTO.Subraces);
+            // await TryParseTraits(categoryDTO.Traits);
+            // await TryParseWeaponProperties(categoryDTO.WeaponProperties);
 
-            // ResultsDTO results_alignments = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Alignments);
             // ResultsDTO results_backgrounds = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
             // ResultsDTO results_classes = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Classes);
             // ResultsDTO results_conditions = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Conditions);
@@ -56,30 +77,6 @@ namespace DndParser
             // ResultsDTO results_subraces = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subraces);
             // ResultsDTO results_traits = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Traits);
             // ResultsDTO results_weaponProperties = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.WeaponProperties);
-
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Alignments);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Classes);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Conditions);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.DamageTypes);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Equipment);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.EquipmentCategories);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Feats);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Features);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Languages);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.MagicItems);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.MagicSchools);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Monsters);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Proficiencies);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Races);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.RuleSections);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Rules);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Skills);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Spells);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subclasses);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subraces);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Traits);
-            // ResultsDTO focusDTO = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.WeaponProperties);
 
             // ResultsDTO focusDTO = results_alignments;
 
@@ -179,6 +176,40 @@ namespace DndParser
         #endregion
 
         // --------------------------------
+        //	    PARSE - ALIGNMENTS
+	    // --------------------------------
+        #region Parse_Alignments
+
+        private static async Task TryParseAlignments(string alignmentsUrl)
+        {
+            try
+            {
+                List<AlignmentDTO> alignmentDTOs = new();
+
+                ResultsDTO results_alignments = await GetSpecificDTOAtUrl<ResultsDTO>(alignmentsUrl);
+                await AddAlignments(results_alignments.Results, alignmentDTOs);
+
+                SchemaRoot_AlignmentDTO exportDTO = MapToSchemaDTOs_Alignments(alignmentDTOs);
+                ExportData(exportDTO);
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        private static async Task AddAlignments(List<UrlDTO> results_alignments, List<AlignmentDTO> alignmentDTOs)
+        {
+            foreach(UrlDTO urlDTO in results_alignments)
+            {
+                AlignmentDTO? alignmentDTO = await GetSpecificDTOAtUrl<AlignmentDTO>(urlDTO.Url);
+                alignmentDTOs.Add(alignmentDTO);
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
         //	    PARSE - SKILLS
 	    // --------------------------------
         #region Parse_Skills
@@ -267,6 +298,25 @@ namespace DndParser
             return exportDTO;
         }
         
+        private static SchemaRoot_AlignmentDTO MapToSchemaDTOs_Alignments(List<AlignmentDTO> alignments)
+        {
+            SchemaRoot_AlignmentDTO exportDTO = new();
+
+            foreach(AlignmentDTO alignmentDTO in alignments)
+            {
+                SchemaAlignmentDTO newAlignment = new();
+                
+                newAlignment.Name = alignmentDTO.Name;
+                newAlignment.Abbreviation = alignmentDTO.Abbreviation;
+                newAlignment.Description = alignmentDTO.Desc;
+                newAlignment.UpdatedAt = alignmentDTO.UpdatedAt;
+
+                exportDTO.Alignments.Add(newAlignment);
+            }
+
+            return exportDTO;
+        }
+
         private static SchemaRoot_SkillDTO MapToSchemaDTOs_Skills(List<SkillDTO> skills)
         {
             SchemaRoot_SkillDTO exportDTO = new();
