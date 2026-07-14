@@ -61,6 +61,18 @@ namespace DndParser
     #endregion
 
     // --------------------------------
+    //	    CONDITIONS DTOs
+    // --------------------------------
+    #region Condition DTOs
+
+    public class SchemaRoot_ConditionsDTO
+    {
+        [JsonPropertyName("conditions")] public List<SchemaDescriptionDTO> Conditions { get; set; } = new();
+    }
+
+    #endregion
+
+    // --------------------------------
     //	    SKILL DTOs
     // --------------------------------
     #region Skill DTOs

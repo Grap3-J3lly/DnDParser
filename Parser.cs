@@ -30,16 +30,16 @@ namespace DndParser
             // - Rules (0)
             // - Spells (0)
 
-            CategoryDTO categoryDTO = await GetSpecificDTOAtUrl<CategoryDTO>(apiYear2014);
+            CategoryDTO categoryDTO = await GetDTOAtUrl<CategoryDTO>(apiYear2014);
             // await TryParseAbilityScores(categoryDTO.AbilityScores); // ---DONE--- //
             // await TryParseAlignments(categoryDTO.Alignments); // ---DONE--- //
-            // await TryParseBackgrounds(categoryDTO.Backgrounds);
+            // await TryParseBackgrounds(categoryDTO.Backgrounds); // TBD
             // await TryParseClasses(categoryDTO.Classes);
-            // await TryParseConditions(categoryDTO.Conditions);
+            await TryParseConditions(categoryDTO.Conditions);
             // await TryParseDamageTypes(categoryDTO.DamageTypes);
             // await TryParseEquipment(categoryDTO.Equipment);
             // await TryParseEquipmentCategories(categoryDTO.EquipmentCategories);
-            // await TryParseFeats(categoryDTO.Feats);
+            // await TryParseFeats(categoryDTO.Feats); // TBD
             // await TryParseFeatures(categoryDTO.Features);
             // await TryParseLanguages(categoryDTO.Languages);
             // await TryParseMagicItems(categoryDTO.MagicItems);
@@ -58,7 +58,6 @@ namespace DndParser
 
             // ResultsDTO results_backgrounds = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
             // ResultsDTO results_classes = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Classes);
-            // ResultsDTO results_conditions = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Conditions);
             // ResultsDTO results_damageTypes = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.DamageTypes);
             // ResultsDTO results_equipment = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Equipment);
             // ResultsDTO results_equipmentCategories = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.EquipmentCategories);
@@ -114,13 +113,16 @@ namespace DndParser
                 List<AbilityScoreDTO> abilityScoreDTOs = new();
 
                 // Get initial list of scores
-                ResultsDTO resultsDTO = await GetSpecificDTOAtUrl<ResultsDTO>(abilityScoresUrl);
+                ResultsDTO resultsDTO = await GetDTOAtUrl<ResultsDTO>(abilityScoresUrl);
 
                 // Load and store the full score details
-                await AddAbilityScores(resultsDTO.Results, abilityScoreDTOs);
+                await AddDTOToList(resultsDTO.Results, abilityScoreDTOs);
 
                 // Load and store all skill details
-                await AddAbilityScoreSkills(abilityScoreDTOs);
+                foreach(AbilityScoreDTO scoreDTO in abilityScoreDTOs)
+                {
+                    await AddDTOToList(scoreDTO.Skills, scoreDTO.SkillsDetailed);
+                }
 
                 // Map to Schema
                 SchemaRoot_AbilityScoreDTO exportDTO = MapToSchemaDTOs_AbilityScores(abilityScoreDTOs);
@@ -131,45 +133,6 @@ namespace DndParser
             catch(Exception exception)
             {
                 Console.WriteLine($"Caught unexpected exception: {exception}");
-            }
-        }
-
-        /// <summary>
-        /// Loads in ability score details based on info from smaller input DTOs, serializes and adds them to list of the more detailed abilityScoreDTOs
-        /// </summary>
-        /// <param name="client"></param>
-        /// <param name="abilityScoreUrlDTOs"></param>
-        /// /// <param name="abilityScoreDTOs"></param>
-        private static async Task AddAbilityScores(List<UrlDTO> abilityScoreUrlDTOs, List<AbilityScoreDTO> abilityScoreDTOs)
-        {
-            foreach(UrlDTO abilityScoreUrlDTO in abilityScoreUrlDTOs)
-            {
-                AbilityScoreDTO? newAbilityScoreDTO = await GetSpecificDTOAtUrl<AbilityScoreDTO>(abilityScoreUrlDTO.Url);
-                abilityScoreDTOs.Add(newAbilityScoreDTO);
-            }
-        }
-
-        /// <summary>
-        /// Runs through each abilityScoreDTO, grabs their list of Skills, and loads/stores the associated detailed SkillDTO
-        /// </summary>
-        /// <param name="client"></param>
-        /// <param name="abilityScoreDTOs"></param>
-        /// <param name="skillDTOs"></param>
-        private static async Task AddAbilityScoreSkills(List<AbilityScoreDTO> abilityScoreDTOs)
-        {
-            foreach(AbilityScoreDTO scoreDTO in abilityScoreDTOs)
-            {
-                foreach(UrlDTO skillGeneralDTO in scoreDTO.Skills)
-                {
-                    if(skillGeneralDTO.Url == string.Empty)
-                    {
-                        Console.WriteLine($"No Url Stored in skillGeneralDTO {skillGeneralDTO}, moving to next iteration");
-                        continue;
-                    }
-
-                    DescriptionDTO? newSkillDTO = await GetSpecificDTOAtUrl<DescriptionDTO>(skillGeneralDTO.Url);
-                    scoreDTO.SkillsDetailed.Add(newSkillDTO);
-                }
             }
         }
 
@@ -186,8 +149,8 @@ namespace DndParser
             {
                 List<AlignmentDTO> alignmentDTOs = new();
 
-                ResultsDTO results_alignments = await GetSpecificDTOAtUrl<ResultsDTO>(alignmentsUrl);
-                await AddAlignments(results_alignments.Results, alignmentDTOs);
+                ResultsDTO results_alignments = await GetDTOAtUrl<ResultsDTO>(alignmentsUrl);
+                await AddDTOToList(results_alignments.Results, alignmentDTOs);
 
                 SchemaRoot_AlignmentDTO exportDTO = MapToSchemaDTOs_Alignments(alignmentDTOs);
                 ExportData(exportDTO);
@@ -198,12 +161,28 @@ namespace DndParser
             }
         }
 
-        private static async Task AddAlignments(List<UrlDTO> results_alignments, List<AlignmentDTO> alignmentDTOs)
+        #endregion
+
+        // --------------------------------
+        //	    PARSE - CONDITIONS
+	    // --------------------------------
+        #region Parse_Conditions
+
+        private static async Task TryParseConditions(string conditionsUrl)
         {
-            foreach(UrlDTO urlDTO in results_alignments)
+            try
             {
-                AlignmentDTO? alignmentDTO = await GetSpecificDTOAtUrl<AlignmentDTO>(urlDTO.Url);
-                alignmentDTOs.Add(alignmentDTO);
+                List<DescriptionDTO> conditionDTOs = new();
+
+                ResultsDTO results_conditions = await GetDTOAtUrl<ResultsDTO>(conditionsUrl);
+                await AddDTOToList(results_conditions.Results, conditionDTOs);
+
+                SchemaRoot_ConditionsDTO exportDTO = MapToSchemaDTOs_Conditions(conditionDTOs);
+                ExportData(exportDTO);
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
             }
         }
 
@@ -220,8 +199,8 @@ namespace DndParser
             {
                 List<SkillDTO> skillDTOs = new();
 
-                ResultsDTO results_skills = await GetSpecificDTOAtUrl<ResultsDTO>(skillsUrl);
-                await AddSkills(results_skills.Results, skillDTOs);
+                ResultsDTO results_skills = await GetDTOAtUrl<ResultsDTO>(skillsUrl);
+                await AddDTOToList(results_skills.Results, skillDTOs);
                 await AddSkillAbilityScore(skillDTOs);
 
                 SchemaRoot_SkillDTO exportDTO = MapToSchemaDTOs_Skills(skillDTOs);
@@ -233,20 +212,11 @@ namespace DndParser
             }
         }
 
-        private static async Task AddSkills(List<UrlDTO> skillUrlDTOs, List<SkillDTO> skillDTOs)
-        {
-            foreach(UrlDTO skillUrlDTO in skillUrlDTOs)
-            {
-                SkillDTO? skillDTO = await GetSpecificDTOAtUrl<SkillDTO>(skillUrlDTO.Url);
-                skillDTOs.Add(skillDTO);
-            }
-        }
-
         private static async Task AddSkillAbilityScore(List<SkillDTO> skillDTOs)
         {
             foreach(SkillDTO skillDTO in skillDTOs)
             {
-                DescriptionDTO? descriptionDTO = await GetSpecificDTOAtUrl<DescriptionDTO>(skillDTO.AbilityScore.Url);
+                DescriptionDTO? descriptionDTO = await GetDTOAtUrl<DescriptionDTO>(skillDTO.AbilityScore.Url);
                 skillDTO.AbilityScoreDetailed = descriptionDTO;
             }
         }
@@ -317,6 +287,23 @@ namespace DndParser
             return exportDTO;
         }
 
+        private static SchemaRoot_ConditionsDTO MapToSchemaDTOs_Conditions(List<DescriptionDTO> conditions)
+        {
+            SchemaRoot_ConditionsDTO exportDTO = new();
+
+            foreach(DescriptionDTO conditionDTO in conditions)
+            {
+                SchemaDescriptionDTO newCondition = new();
+                newCondition.Name = conditionDTO.Name;
+                newCondition.UpdatedAt = conditionDTO.UpdatedAt;
+
+                newCondition.Description = string.Join(" ", conditionDTO.Desc);
+                exportDTO.Conditions.Add(newCondition);
+            }
+
+            return exportDTO;
+        }
+
         private static SchemaRoot_SkillDTO MapToSchemaDTOs_Skills(List<SkillDTO> skills)
         {
             SchemaRoot_SkillDTO exportDTO = new();
@@ -347,7 +334,7 @@ namespace DndParser
 	    // --------------------------------
         #region UniversalFunctions
 
-        private static async Task<T> GetSpecificDTOAtUrl<T>(string url)
+        private static async Task<T> GetDTOAtUrl<T>(string url)
         {
             string response = await WebClient.GetDataAtURL(dndBaseUrl, url);
 
@@ -358,6 +345,20 @@ namespace DndParser
             }
 
             return JsonSerializer.Deserialize<T>(response);
+        }
+
+        /// <summary>
+        /// Loads in DTO details at url in UrlDTO, serializes and adds them to list of specified type
+        /// </summary>
+        /// <param name="urlsToLoad"></param>
+        /// <param name="dtoList"></param>
+        private static async Task AddDTOToList<T>(List<UrlDTO> urlsToLoad, List<T> dtoList)
+        {
+            foreach(UrlDTO urlDTO in urlsToLoad)
+            {
+                T? newDTO = await GetDTOAtUrl<T>(urlDTO.Url);
+                dtoList.Add(newDTO);
+            }
         }
 
         private static void ExportData<T>(T exportDTO)
