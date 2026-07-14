@@ -103,6 +103,15 @@ namespace DndParser
     }
 
     // --------------------------------
+    //	    MAGIC SCHOOL DTOs
+    // --------------------------------
+
+    public class SchemaRoot_MagicSchoolDTO
+    {
+        [JsonPropertyName("magic-schools")] public List<SchemaDescriptionDTO> MagicSchools { get; set; } = new();
+    }
+
+    // --------------------------------
     //	    SKILL DTOs
     // --------------------------------
     #region Skill DTOs

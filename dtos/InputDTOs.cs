@@ -23,6 +23,14 @@ namespace DndParser
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("desc")] public string Desc { get; set; }
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+    }
+
+    public class DescriptionsDTO
+    {
+        [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("full_name")] public string FullName { get; set; } = string.Empty;
         [JsonPropertyName("desc")] public string[] Desc { get; set; }
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
@@ -79,7 +87,7 @@ namespace DndParser
         [JsonPropertyName("full_name")] public string FullName { get; set; } = string.Empty;
         [JsonPropertyName("desc")] public string[] Desc { get; set; }
         [JsonPropertyName("skills")] public List<UrlDTO> Skills { get; set; } = new();
-        [JsonPropertyName("skillsDetailed")] public List<DescriptionDTO> SkillsDetailed { get; set; } = new();
+        [JsonPropertyName("skillsDetailed")] public List<DescriptionsDTO> SkillsDetailed { get; set; } = new();
         [JsonPropertyName("url")] public string Url { get; set; } = string.Empty;
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
@@ -90,6 +98,22 @@ namespace DndParser
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("abbreviation")] public string Abbreviation { get; set; } = string.Empty;
         [JsonPropertyName("desc")] public string Desc { get; set; } = string.Empty;
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+    }
+
+    public class ClassDTO
+    {
+        [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("hit_die")] public int HitDie { get; set; } = 0;
+        // proficiency_choices
+        [JsonPropertyName("proficiencies")] public List<UrlDTO> Proficiencies { get; set; } = new();
+        [JsonPropertyName("saving_throws")] public List<UrlDTO> SavingThrows { get; set; } = new();
+        // starting_equipment
+        // starting_equipment_options
+        // class_levels
+        // multi_classing
+        [JsonPropertyName("subclasses")] public List<UrlDTO> Subclasses { get; set; } = new();
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
@@ -109,7 +133,7 @@ namespace DndParser
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("desc")] public string[] Desc { get; set; }
         [JsonPropertyName("ability_score")] public UrlDTO AbilityScore { get; set; } = new();
-        [JsonPropertyName("abilityScoreDetailed")] public DescriptionDTO AbilityScoreDetailed { get; set; } = new();
+        [JsonPropertyName("abilityScoreDetailed")] public DescriptionsDTO AbilityScoreDetailed { get; set; } = new();
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 

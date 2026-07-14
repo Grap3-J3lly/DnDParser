@@ -30,25 +30,38 @@ namespace DndParser
             // - Rules (0)
             // - Spells (0)
 
+            // TODO: Immediate Queue:
+            // - Magic Schools
+            // - Rule Sections
+            // - Equipment Categories
+            // - Weapon Properties
+            // - Traits
+            // - Subraces
+            // - Races
+
             CategoryDTO categoryDTO = await GetDTOAtUrl<CategoryDTO>(apiYear2014);
             // await TryParseAbilityScores(categoryDTO.AbilityScores); // ---DONE--- //
             // await TryParseAlignments(categoryDTO.Alignments); // ---DONE--- //
             // await TryParseBackgrounds(categoryDTO.Backgrounds); // TBD
+            // ResultsDTO results_backgrounds = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
 
             // await TryParseClasses(categoryDTO.Classes);
             
             // await TryParseConditions(categoryDTO.Conditions); // ---DONE--- //
-            
-            await TryParseDamageTypes(categoryDTO.DamageTypes);
+            // await TryParseDamageTypes(categoryDTO.DamageTypes); // ---DONE--- //
+
             // await TryParseEquipment(categoryDTO.Equipment);
             // await TryParseEquipmentCategories(categoryDTO.EquipmentCategories);
             
             // await TryParseFeats(categoryDTO.Feats); // TBD
+            // ResultsDTO results_feats = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Feats);
             
             // await TryParseFeatures(categoryDTO.Features);
+
             // await TryParseLanguages(categoryDTO.Languages); // ---DONE--- //
+
             // await TryParseMagicItems(categoryDTO.MagicItems);
-            // await TryParseMagicSchools(categoryDTO.MagicSchools);
+            await TryParseMagicSchools(categoryDTO.MagicSchools);
             // await TryParseMonsters(categoryDTO.Monsters);
             // await TryParseProficiencies(categoryDTO.Proficiencies);
             // await TryParseRaces(categoryDTO.Races);
@@ -62,32 +75,6 @@ namespace DndParser
             // await TryParseSubraces(categoryDTO.Subraces);
             // await TryParseTraits(categoryDTO.Traits);
             // await TryParseWeaponProperties(categoryDTO.WeaponProperties);
-
-            // ResultsDTO results_backgrounds = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
-            // ResultsDTO results_classes = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Classes);
-            // ResultsDTO results_equipment = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Equipment);
-            // ResultsDTO results_equipmentCategories = await GetDTOAtUrl<ResultsDTO>(categoryDTO.EquipmentCategories);
-            // ResultsDTO results_feats = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Feats);
-            // ResultsDTO results_features = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Features);
-            // ResultsDTO results_magicItems = await GetDTOAtUrl<ResultsDTO>(categoryDTO.MagicItems);
-            // ResultsDTO results_magicSchools = await GetDTOAtUrl<ResultsDTO>(categoryDTO.MagicSchools);
-            // ResultsDTO results_monsters = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Monsters);
-            // ResultsDTO results_races = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Races);
-            // ResultsDTO results_ruleSections = await GetDTOAtUrl<ResultsDTO>(categoryDTO.RuleSections);
-            // ResultsDTO results_rules = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Rules);
-            // ResultsDTO results_spells = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Spells);
-            // ResultsDTO results_subclasses = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Subclasses);
-            // ResultsDTO results_subraces = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Subraces);
-            // ResultsDTO results_traits = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Traits);
-            // ResultsDTO results_weaponProperties = await GetDTOAtUrl<ResultsDTO>(categoryDTO.WeaponProperties);
-
-            // ResultsDTO focusDTO = results_alignments;
-
-            // foreach(UrlDTO urlObj in focusDTO.Results)
-            // {
-            //     Console.WriteLine($"Results: {urlObj.Name}");
-            // }
-
         }
 
         // This might be rate locked
@@ -168,6 +155,28 @@ namespace DndParser
         #endregion
 
         // --------------------------------
+        //	    PARSE - CLASSES
+	    // --------------------------------
+        #region Classes
+
+        private static async Task TryParseClasses(string classesUrl)
+        {
+            try
+            {
+                ResultsDTO results_classes = await GetDTOAtUrl<ResultsDTO>(classesUrl);
+
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_classes.Results[0].Url);
+                Console.WriteLine($"Class Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
         //	    PARSE - CONDITIONS
 	    // --------------------------------
         #region Conditions
@@ -176,7 +185,7 @@ namespace DndParser
         {
             try
             {
-                List<DescriptionDTO> conditionDTOs = new();
+                List<DescriptionsDTO> conditionDTOs = new();
 
                 ResultsDTO results_conditions = await GetDTOAtUrl<ResultsDTO>(conditionsUrl);
                 await AddDTOToList(results_conditions.Results, conditionDTOs);
@@ -201,12 +210,75 @@ namespace DndParser
         {
             try
             {
-                List<DescriptionDTO> damageTypeDTOs = new();
+                List<DescriptionsDTO> damageTypeDTOs = new();
                 ResultsDTO results_damageTypes = await GetDTOAtUrl<ResultsDTO>(damageTypesUrl);
                 await AddDTOToList(results_damageTypes.Results, damageTypeDTOs);
 
                 SchemaRoot_DamageTypeDTO exportDTO = MapToSchemaDTOs_DamageTypes(damageTypeDTOs);
                 ExportData(exportDTO);
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //	    PARSE - EQUIPMENT
+	    // --------------------------------
+        #region Equipment
+
+        private static async Task TryParseEquipment(string equipmentUrl)
+        {
+            try
+            {
+                ResultsDTO results_equipment = await GetDTOAtUrl<ResultsDTO>(equipmentUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_equipment.Results[0].Url);
+                Console.WriteLine($"Equipment Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //  PARSE - EQUIPMENT CATEGORIES
+	    // --------------------------------
+        #region Equipment Categories
+
+        private static async Task TryParseEquipmentCategories(string equipmentCategoryUrl)
+        {
+            try
+            {
+                ResultsDTO results_equipmentCategories = await GetDTOAtUrl<ResultsDTO>(equipmentCategoryUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_equipmentCategories.Results[0].Url);
+                Console.WriteLine($"Equipment Category Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - FEATURES
+	    // --------------------------------
+        #region Features
+
+        private static async Task TryParseFeatures(string featuresUrl)
+        {
+            try
+            {
+                ResultsDTO results_features = await GetDTOAtUrl<ResultsDTO>(featuresUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_features.Results[0].Url);
+                Console.WriteLine($"Features Details: {response}");
             }
             catch(Exception exception)
             {
@@ -242,6 +314,75 @@ namespace DndParser
         #endregion
 
         // --------------------------------
+        //      PARSE - MAGIC ITEMS
+	    // --------------------------------
+        #region Magic Items
+
+        private static async Task TryParseMagicItems(string magicItemsUrl)
+        {
+            try
+            {
+                ResultsDTO results_magicItems = await GetDTOAtUrl<ResultsDTO>(magicItemsUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_magicItems.Results[0].Url);
+                Console.WriteLine($"Magic Items Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - MAGIC SCHOOLS
+	    // --------------------------------
+        #region Magic Schools
+
+        private static async Task TryParseMagicSchools(string magicSchoolsUrl)
+        {
+            try
+            {
+                List<DescriptionDTO> magicSchoolDTOs = new();
+
+                ResultsDTO results_magicSchools = await GetDTOAtUrl<ResultsDTO>(magicSchoolsUrl);
+                await AddDTOToList(results_magicSchools.Results, magicSchoolDTOs);
+                SchemaRoot_MagicSchoolDTO exportDTO = MapToSchemaDTOs_MagicSchools(magicSchoolDTOs);
+                ExportData(exportDTO);
+
+                // string response = await WebClient.GetDataAtURL(dndBaseUrl, results_magicSchools.Results[0].Url);
+                // Console.WriteLine($"Magic Schools Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - MONSTERS
+	    // --------------------------------
+        #region Monsters
+
+        private static async Task TryParseMonsters(string monstersUrl)
+        {
+            try
+            {
+                ResultsDTO results_monsters = await GetDTOAtUrl<ResultsDTO>(monstersUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_monsters.Results[0].Url);
+                Console.WriteLine($"Monsters Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
         //	    PARSE - PROFICIENCIES
 	    // --------------------------------
         #region Proficiencies
@@ -254,6 +395,69 @@ namespace DndParser
 
                 string response = await WebClient.GetDataAtURL(dndBaseUrl, results_proficiencies.Results[0].Url);
                 Console.WriteLine($"Proficiencies Detailed: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - RACES
+	    // --------------------------------
+        #region Races
+
+        private static async Task TryParseRaces(string racesUrl)
+        {
+            try
+            {
+                ResultsDTO results_races = await GetDTOAtUrl<ResultsDTO>(racesUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_races.Results[0].Url);
+                Console.WriteLine($"Races Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - RULE SECTIONS
+	    // --------------------------------
+        #region Rule Sections
+
+        private static async Task TryParseRuleSections(string ruleSectionsUrl)
+        {
+            try
+            {
+                ResultsDTO results_ruleSections = await GetDTOAtUrl<ResultsDTO>(ruleSectionsUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_ruleSections.Results[0].Url);
+                Console.WriteLine($"Rule Section Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - RULES
+	    // --------------------------------
+        #region Rules
+
+        private static async Task TryParseRules(string rulesUrl)
+        {
+            try
+            {
+                ResultsDTO results_rules = await GetDTOAtUrl<ResultsDTO>(rulesUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_rules.Results[0].Url);
+                Console.WriteLine($"Rules Details: {response}");
             }
             catch(Exception exception)
             {
@@ -291,8 +495,113 @@ namespace DndParser
         {
             foreach(SkillDTO skillDTO in skillDTOs)
             {
-                DescriptionDTO? descriptionDTO = await GetDTOAtUrl<DescriptionDTO>(skillDTO.AbilityScore.Url);
+                DescriptionsDTO? descriptionDTO = await GetDTOAtUrl<DescriptionsDTO>(skillDTO.AbilityScore.Url);
                 skillDTO.AbilityScoreDetailed = descriptionDTO;
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - SPELLS
+	    // --------------------------------
+        #region Spells
+
+        private static async Task TryParseSpells(string spellsUrl)
+        {
+            try
+            {
+                ResultsDTO results_spells = await GetDTOAtUrl<ResultsDTO>(spellsUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_spells.Results[0].Url);
+                Console.WriteLine($"Spell Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - SUBCLASSES
+	    // --------------------------------
+        #region Subclasses
+
+        private static async Task TryParseSubclasses(string subclassesUrl)
+        {
+            try
+            {
+                ResultsDTO results_subclasses = await GetDTOAtUrl<ResultsDTO>(subclassesUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_subclasses.Results[0].Url);
+                Console.WriteLine($"Subclasses Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - SUBRACES
+	    // --------------------------------
+        #region Subraces
+
+        private static async Task TryParseSubraces(string subracesUrl)
+        {
+            try
+            {
+                ResultsDTO results_subraces = await GetDTOAtUrl<ResultsDTO>(subracesUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_subraces.Results[0].Url);
+                Console.WriteLine($"Subraces Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //      PARSE - TRAITS
+	    // --------------------------------
+        #region Traits
+
+        private static async Task TryParseTraits(string traitsUrl)
+        {
+            try
+            {
+                ResultsDTO results_traits = await GetDTOAtUrl<ResultsDTO>(traitsUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_traits.Results[0].Url);
+                Console.WriteLine($"Traits Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //  PARSE - WEAPON PROPERTIES
+	    // --------------------------------
+        #region Weapon Properties
+
+        private static async Task TryParseWeaponProperties(string weaponPropertiesUrl)
+        {
+            try
+            {
+                ResultsDTO results_weaponProperties = await GetDTOAtUrl<ResultsDTO>(weaponPropertiesUrl);
+                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_weaponProperties.Results[0].Url);
+                Console.WriteLine($"Weapon Properties Details: {response}");
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
             }
         }
 
@@ -304,9 +613,24 @@ namespace DndParser
 
         #region SchemaMapping
 
+        /// This variation is for DTOs with single line descriptions
         private static void MapToDescriptionSchema(List<DescriptionDTO> generalDTOs, List<SchemaDescriptionDTO> schemaDTOs)
         {
             foreach(DescriptionDTO generalDTO in generalDTOs)
+            {
+                SchemaDescriptionDTO newCondition = new();
+                newCondition.Name = generalDTO.Name;
+                newCondition.UpdatedAt = generalDTO.UpdatedAt;
+
+                newCondition.Description = generalDTO.Desc;
+                schemaDTOs.Add(newCondition);
+            }
+        }
+
+        /// This variation is for DTOs with multi-line descriptions
+        private static void MapToDescriptionsSchema(List<DescriptionsDTO> generalDTOs, List<SchemaDescriptionDTO> schemaDTOs)
+        {
+            foreach(DescriptionsDTO generalDTO in generalDTOs)
             {
                 SchemaDescriptionDTO newCondition = new();
                 newCondition.Name = generalDTO.Name;
@@ -341,7 +665,7 @@ namespace DndParser
 
                 // Creating and adding proper skill objects
                 newAbility.Skills = new();
-                foreach(DescriptionDTO skillDetail in abScoreDTO.SkillsDetailed)
+                foreach(DescriptionsDTO skillDetail in abScoreDTO.SkillsDetailed)
                 {                    
                     SchemaDescriptionDTO newSkill = new();
                     newSkill.Name = skillDetail.Name;
@@ -375,17 +699,17 @@ namespace DndParser
             return exportDTO;
         }
 
-        private static SchemaRoot_ConditionsDTO MapToSchemaDTOs_Conditions(List<DescriptionDTO> conditions)
+        private static SchemaRoot_ConditionsDTO MapToSchemaDTOs_Conditions(List<DescriptionsDTO> conditions)
         {
             SchemaRoot_ConditionsDTO exportDTO = new();
-            MapToDescriptionSchema(conditions, exportDTO.Conditions);
+            MapToDescriptionsSchema(conditions, exportDTO.Conditions);
             return exportDTO;
         }
 
-        private static SchemaRoot_DamageTypeDTO MapToSchemaDTOs_DamageTypes(List<DescriptionDTO> damageTypes)
+        private static SchemaRoot_DamageTypeDTO MapToSchemaDTOs_DamageTypes(List<DescriptionsDTO> damageTypes)
         {
             SchemaRoot_DamageTypeDTO exportDTO = new();
-            MapToDescriptionSchema(damageTypes, exportDTO.DamageTypes);
+            MapToDescriptionsSchema(damageTypes, exportDTO.DamageTypes);
             return exportDTO;
         }
 
@@ -405,6 +729,13 @@ namespace DndParser
                 exportDTO.Languages.Add(newLanguage);
             }
 
+            return exportDTO;
+        }
+
+        private static SchemaRoot_MagicSchoolDTO MapToSchemaDTOs_MagicSchools(List<DescriptionDTO> magicSchools)
+        {
+            SchemaRoot_MagicSchoolDTO exportDTO = new();
+            MapToDescriptionSchema(magicSchools, exportDTO.MagicSchools);
             return exportDTO;
         }
 
