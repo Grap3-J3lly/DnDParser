@@ -73,6 +73,24 @@ namespace DndParser
     #endregion
 
     // --------------------------------
+    //	    LANGUAGE DTOs
+    // --------------------------------
+
+    public class SchemaRoot_LanguageDTO
+    {
+        [JsonPropertyName("languages")] public List<SchemaLanguageDTO> Languages { get; set; } = new();
+    }
+
+    public class SchemaLanguageDTO
+    {
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("type")] public string Type { get; set; } = string.Empty;
+        [JsonPropertyName("typical_speakers")] public string TypicalSpeakers { get; set; } = string.Empty;
+        [JsonPropertyName("script")] public string Script { get; set; } = string.Empty;
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+    }
+
+    // --------------------------------
     //	    SKILL DTOs
     // --------------------------------
     #region Skill DTOs

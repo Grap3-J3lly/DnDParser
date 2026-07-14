@@ -93,6 +93,16 @@ namespace DndParser
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
+    public class LanguageDTO
+    {
+        [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("type")] public string Type { get; set; } = string.Empty;
+        [JsonPropertyName("typical_speakers")] public string[] TypicalSpeakers { get; set; }
+        [JsonPropertyName("script")] public string Script { get; set; } = string.Empty;
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+    }
+
     public class SkillDTO
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;

@@ -3,7 +3,7 @@
     "type": "object",
     "properties":
     {
-        "conditions":
+        "languages":
         {
             "type": "array",
             "items":
@@ -15,25 +15,37 @@
                         "name":
                         {
                             "type": "string",
-                            "description": "The 'name' attribute of the condition"
+                            "description": "The 'name' attribute of the language"
                         },
-                        "description":
+                        "type":
+                        {
+                            "type":"string",
+                            "description": "The 'type' attribute of the language"
+                        },
+                        "typical_speakers":
                         {
                             "type": "string",
-                            "description": "The 'description' attribute of the condition, concatenated with a space delimiter"
+                            "description": "The 'typical_speakers' attribute of the language, concatenated with a comma and space delimiter"
+                        },
+                        "script":
+                        {
+                            "type":"string",
+                            "description": "The 'script' attribute of the language"
                         },
                         "updated_at":
                         {
                             "type": "string",
                             "format": "date-time",
-                            "description": "The 'updated_at' attribute of the condition"
+                            "description": "The 'updated_at' attribute of the language"
                         }
                     },
                     "additionalProperties": false,
                     "required":
                     [
                         "name",
-                        "description",
+                        "type",
+                        "typical_speakers",
+                        "script",
                         "updated_at"
                     ]
                 }
@@ -43,6 +55,6 @@
     "additionalProperties": false,
     "required":
     [
-        "conditions"
+        "languages"
     ]
 }

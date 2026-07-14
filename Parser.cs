@@ -34,14 +34,19 @@ namespace DndParser
             // await TryParseAbilityScores(categoryDTO.AbilityScores); // ---DONE--- //
             // await TryParseAlignments(categoryDTO.Alignments); // ---DONE--- //
             // await TryParseBackgrounds(categoryDTO.Backgrounds); // TBD
+
             // await TryParseClasses(categoryDTO.Classes);
-            await TryParseConditions(categoryDTO.Conditions);
+            
+            // await TryParseConditions(categoryDTO.Conditions); // ---DONE--- //
+            
             // await TryParseDamageTypes(categoryDTO.DamageTypes);
             // await TryParseEquipment(categoryDTO.Equipment);
             // await TryParseEquipmentCategories(categoryDTO.EquipmentCategories);
+            
             // await TryParseFeats(categoryDTO.Feats); // TBD
+            
             // await TryParseFeatures(categoryDTO.Features);
-            // await TryParseLanguages(categoryDTO.Languages);
+            await TryParseLanguages(categoryDTO.Languages);
             // await TryParseMagicItems(categoryDTO.MagicItems);
             // await TryParseMagicSchools(categoryDTO.MagicSchools);
             // await TryParseMonsters(categoryDTO.Monsters);
@@ -49,33 +54,34 @@ namespace DndParser
             // await TryParseRaces(categoryDTO.Races);
             // await TryParseRuleSections(categoryDTO.RuleSections);
             // await TryParseRules(categoryDTO.Rules);
+            
             // await TryParseSkills(categoryDTO.Skills); // ---DONE--- //
+            
             // await TryParseSpells(categoryDTO.Spells);
             // await TryParseSubclasses(categoryDTO.Subclasses);
             // await TryParseSubraces(categoryDTO.Subraces);
             // await TryParseTraits(categoryDTO.Traits);
             // await TryParseWeaponProperties(categoryDTO.WeaponProperties);
 
-            // ResultsDTO results_backgrounds = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
-            // ResultsDTO results_classes = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Classes);
-            // ResultsDTO results_damageTypes = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.DamageTypes);
-            // ResultsDTO results_equipment = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Equipment);
-            // ResultsDTO results_equipmentCategories = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.EquipmentCategories);
-            // ResultsDTO results_feats = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Feats);
-            // ResultsDTO results_features = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Features);
-            // ResultsDTO results_languages = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Languages);
-            // ResultsDTO results_magicItems = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.MagicItems);
-            // ResultsDTO results_magicSchools = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.MagicSchools);
-            // ResultsDTO results_monsters = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Monsters);
-            // ResultsDTO results_proficiencies = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Proficiencies);
-            // ResultsDTO results_races = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Races);
-            // ResultsDTO results_ruleSections = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.RuleSections);
-            // ResultsDTO results_rules = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Rules);
-            // ResultsDTO results_spells = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Spells);
-            // ResultsDTO results_subclasses = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subclasses);
-            // ResultsDTO results_subraces = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Subraces);
-            // ResultsDTO results_traits = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.Traits);
-            // ResultsDTO results_weaponProperties = await GetSpecificDTOAtUrl<ResultsDTO>(categoryDTO.WeaponProperties);
+            // ResultsDTO results_backgrounds = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
+            // ResultsDTO results_classes = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Classes);
+            // ResultsDTO results_damageTypes = await GetDTOAtUrl<ResultsDTO>(categoryDTO.DamageTypes);
+            // ResultsDTO results_equipment = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Equipment);
+            // ResultsDTO results_equipmentCategories = await GetDTOAtUrl<ResultsDTO>(categoryDTO.EquipmentCategories);
+            // ResultsDTO results_feats = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Feats);
+            // ResultsDTO results_features = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Features);
+            // ResultsDTO results_magicItems = await GetDTOAtUrl<ResultsDTO>(categoryDTO.MagicItems);
+            // ResultsDTO results_magicSchools = await GetDTOAtUrl<ResultsDTO>(categoryDTO.MagicSchools);
+            // ResultsDTO results_monsters = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Monsters);
+            // ResultsDTO results_proficiencies = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Proficiencies);
+            // ResultsDTO results_races = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Races);
+            // ResultsDTO results_ruleSections = await GetDTOAtUrl<ResultsDTO>(categoryDTO.RuleSections);
+            // ResultsDTO results_rules = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Rules);
+            // ResultsDTO results_spells = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Spells);
+            // ResultsDTO results_subclasses = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Subclasses);
+            // ResultsDTO results_subraces = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Subraces);
+            // ResultsDTO results_traits = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Traits);
+            // ResultsDTO results_weaponProperties = await GetDTOAtUrl<ResultsDTO>(categoryDTO.WeaponProperties);
 
             // ResultsDTO focusDTO = results_alignments;
 
@@ -178,6 +184,31 @@ namespace DndParser
                 await AddDTOToList(results_conditions.Results, conditionDTOs);
 
                 SchemaRoot_ConditionsDTO exportDTO = MapToSchemaDTOs_Conditions(conditionDTOs);
+                ExportData(exportDTO);
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        #endregion
+
+        // --------------------------------
+        //	    PARSE - LANGUAGES
+	    // --------------------------------
+        #region Parse_Languages
+
+        private static async Task TryParseLanguages(string languageUrl)
+        {
+            try
+            {
+                List<LanguageDTO> languageDTOs = new();
+
+                ResultsDTO results_languages = await GetDTOAtUrl<ResultsDTO>(languageUrl);
+                await AddDTOToList(results_languages.Results, languageDTOs);
+
+                SchemaRoot_LanguageDTO exportDTO = MapToSchemaDTOs_Languages(languageDTOs);
                 ExportData(exportDTO);
             }
             catch(Exception exception)
@@ -299,6 +330,25 @@ namespace DndParser
 
                 newCondition.Description = string.Join(" ", conditionDTO.Desc);
                 exportDTO.Conditions.Add(newCondition);
+            }
+
+            return exportDTO;
+        }
+
+        private static SchemaRoot_LanguageDTO MapToSchemaDTOs_Languages(List<LanguageDTO> languages)
+        {
+            SchemaRoot_LanguageDTO exportDTO = new();
+
+            foreach(LanguageDTO languageDTO in languages)
+            {
+                SchemaLanguageDTO newLanguage = new();
+                newLanguage.Name = languageDTO.Name;
+                newLanguage.Type = languageDTO.Type;
+                newLanguage.Script = languageDTO.Script;
+                newLanguage.UpdatedAt = languageDTO.UpdatedAt;
+
+                newLanguage.TypicalSpeakers = string.Join(", ", languageDTO.TypicalSpeakers);
+                exportDTO.Languages.Add(newLanguage);
             }
 
             return exportDTO;
