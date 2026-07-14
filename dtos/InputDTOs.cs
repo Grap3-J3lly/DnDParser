@@ -3,9 +3,9 @@ namespace DndParser
 {
 
     // --------------------------------
-    //	    GENERALIZED DTOs
+    //	    UNIVERSAL DTOs
     // --------------------------------
-    #region Generalized DTOs
+    #region Universal DTOs
 
     public class ResultsDTO
     {

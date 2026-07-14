@@ -73,6 +73,18 @@ namespace DndParser
     #endregion
 
     // --------------------------------
+    //	    DAMAGE TYPE DTOs
+    // --------------------------------
+    #region Damage Type DTOs
+
+    public class SchemaRoot_DamageTypeDTO
+    {
+        [JsonPropertyName("damage-types")] public List<SchemaDescriptionDTO> DamageTypes { get; set; } = new();
+    }
+
+    #endregion
+
+    // --------------------------------
     //	    LANGUAGE DTOs
     // --------------------------------
 
