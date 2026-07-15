@@ -1,0 +1,173 @@
+{
+    "special":
+    [
+        "You have disadvantage when you use a lance to attack a target within 5 feet of you. Also, a lance requires two hands to wield when you aren't mounted."
+    ],
+    "index": "acid-vial",
+    "name": "Acid (vial)",
+    "equipment_category":
+    {
+        "index": "adventuring-gear",
+        "name": "Adventuring Gear",
+        "url": "/api/2014/equipment-categories/adventuring-gear"
+    },
+    "armor_category": "Medium",
+    "armor_class":
+    {
+        "base": 14,
+        "dex_bonus": true,
+        "max_bonus": 2
+    },
+    "str_minimum": 0,
+    "stealth_disadvantage": false,
+    "gear_category":
+    {
+        "index": "standard-gear",
+        "name": "Standard Gear",
+        "url": "/api/2014/equipment-categories/standard-gear"
+    },
+    "weapon_category": "Martial",
+    "weapon_range": "Ranged",
+    "category_range": "Martial Ranged",
+    "vehicle_category": "Mounts and Other Animals",
+    "speed":
+    {
+        "quantity": 50,
+        "unit": "ft/round"
+    },
+    "capacity": "480 lb.",
+    "quantity": 20,
+    "cost":
+    {
+        "quantity": 25,
+        "unit": "gp"
+    },
+    "damage":
+    {
+    	"damage_dice": "1d10",
+        "damage_type":
+        {
+            "index": "piercing",
+            "name": "Piercing",
+            "url": "/api/2014/damage-types/piercing"
+        }
+    },
+    "two_handed_damage":
+    {
+        "damage_dice": "1d10",
+        "damage_type":
+        {
+            "index": "slashing",
+            "name": "Slashing",
+            "url": "/api/2014/damage-types/slashing"
+        }
+    },
+    "range":
+    {
+        "normal": 100,
+        "long": 400
+    },
+    "weight": 1,
+    "throw_range":
+    {
+        "normal": 5,
+        "long": 15
+    },
+    "desc":
+    [
+        "As an action, you can splash the contents of this vial onto a creature within 5 feet of you or throw the vial up to 20 feet, shattering it on impact. In either case, make a ranged attack against a creature or object, treating the acid as an improvised weapon.",
+        "On a hit, the target takes 2d6 acid damage."
+    ],
+    "contents":
+    [
+        {
+            "item":
+            {
+                "index": "backpack",
+                "name": "Backpack",
+                "url": "/api/2014/equipment/backpack"
+            },
+            "quantity": 1
+        },
+        {
+            "item":
+            {
+                "index": "book",
+                "name": "Book",
+                "url": "/api/2014/equipment/book"
+            },
+            "quantity": 1
+        },
+        {
+            "item":
+            {
+                "index": "ink-1-ounce-bottle",
+                "name": "Ink (1 ounce bottle)",
+                "url": "/api/2014/equipment/ink-1-ounce-bottle"
+            },
+            "quantity": 1
+        },
+        {
+            "item":
+            {
+                "index": "ink-pen",
+                "name": "Ink pen",
+                "url": "/api/2014/equipment/ink-pen"
+            },
+            "quantity": 1
+        },
+        {
+            "item":
+            {
+                "index": "parchment-one-sheet",
+                "name": "Parchment (one sheet)",
+                "url": "/api/2014/equipment/parchment-one-sheet"
+            },
+            "quantity": 10
+        },
+        {
+            "item":
+            {
+                "index": "little-bag-of-sand",
+                "name": "Little bag of sand",
+                "url": "/api/2014/equipment/little-bag-of-sand"
+            },
+            "quantity": 1
+        },
+        {
+            "item":
+            {
+                "index": "small-knife",
+                "name": "Small knife",
+                "url": "/api/2014/equipment/small-knife"
+            },
+            "quantity": 1
+        }
+    ],
+    "properties":
+    [
+        {
+            "index": "ammunition",
+            "name": "Ammunition",
+            "url": "/api/2014/weapon-properties/ammunition"
+        },
+        {
+            "index": "heavy",
+            "name": "Heavy",
+            "url": "/api/2014/weapon-properties/heavy"
+        },
+        {
+            "index": "loading",
+            "name": "Loading",
+            "url": "/api/2014/weapon-properties/loading"
+        },
+        {
+            "index": "two-handed",
+            "name": "Two-Handed",
+            "url": "/api/2014/weapon-properties/two-handed"
+        }
+    ],
+    "image": "/api/images/equipment/crossbow-heavy.png",
+    "url": "/api/2014/equipment/acid-vial",
+    "updated_at": "2026-04-01T20:35:37.141Z"
+}

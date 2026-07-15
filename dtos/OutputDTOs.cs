@@ -105,11 +105,26 @@ namespace DndParser
     // --------------------------------
     //	    MAGIC SCHOOL DTOs
     // --------------------------------
+    #region Magic School DTOs
 
     public class SchemaRoot_MagicSchoolDTO
     {
         [JsonPropertyName("magic-schools")] public List<SchemaDescriptionDTO> MagicSchools { get; set; } = new();
     }
+
+    #endregion
+
+    // --------------------------------
+    //	    RULE SECTION DTOs
+    // --------------------------------
+    #region Rule Section DTOs
+
+    public class SchemaRoot_RuleSectionDTO
+    {
+        [JsonPropertyName("rule-sections")] public List<SchemaDescriptionDTO> RuleSections { get; set; } = new();
+    }
+
+    #endregion
 
     // --------------------------------
     //	    SKILL DTOs
@@ -127,6 +142,18 @@ namespace DndParser
         [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
         [JsonPropertyName("ability_score")] public SchemaFullNameDescriptionDTO AbilityScore { get; set; } = new();
+    }
+
+    #endregion
+
+    // --------------------------------
+    //	    WEAPON PROPERTIES DTOs
+    // --------------------------------   
+    #region Weapon Property DTOs
+
+    public class SchemaRoot_WeaponPropertyDTO
+    {
+        [JsonPropertyName("weapon-properties")] public List<SchemaDescriptionDTO> WeaponProperties { get; set; } = new();
     }
 
     #endregion

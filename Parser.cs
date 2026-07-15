@@ -10,6 +10,7 @@ namespace DndParser
     public class Parser
     {
         public const string dndBaseUrl = "https://www.dnd5eapi.co";
+        public const string filePath = "output/";
         public const string apiYear2014 = "/api/2014/";
         public const string apiYear2024 = "/api/2024/";
 
@@ -31,10 +32,8 @@ namespace DndParser
             // - Spells (0)
 
             // TODO: Immediate Queue:
-            // - Magic Schools
-            // - Rule Sections
             // - Equipment Categories
-            // - Weapon Properties
+            // - Equipment
             // - Traits
             // - Subraces
             // - Races
@@ -50,7 +49,7 @@ namespace DndParser
             // await TryParseConditions(categoryDTO.Conditions); // ---DONE--- //
             // await TryParseDamageTypes(categoryDTO.DamageTypes); // ---DONE--- //
 
-            // await TryParseEquipment(categoryDTO.Equipment);
+            await TryParseEquipment(categoryDTO.Equipment);
             // await TryParseEquipmentCategories(categoryDTO.EquipmentCategories);
             
             // await TryParseFeats(categoryDTO.Feats); // TBD
@@ -61,11 +60,15 @@ namespace DndParser
             // await TryParseLanguages(categoryDTO.Languages); // ---DONE--- //
 
             // await TryParseMagicItems(categoryDTO.MagicItems);
-            await TryParseMagicSchools(categoryDTO.MagicSchools);
+
+            // await TryParseMagicSchools(categoryDTO.MagicSchools); // ---DONE--- //
+
             // await TryParseMonsters(categoryDTO.Monsters);
             // await TryParseProficiencies(categoryDTO.Proficiencies);
             // await TryParseRaces(categoryDTO.Races);
-            // await TryParseRuleSections(categoryDTO.RuleSections);
+            
+            // await TryParseRuleSections(categoryDTO.RuleSections); // ---DONE--- //
+            
             // await TryParseRules(categoryDTO.Rules);
             
             // await TryParseSkills(categoryDTO.Skills); // ---DONE--- //
@@ -74,7 +77,8 @@ namespace DndParser
             // await TryParseSubclasses(categoryDTO.Subclasses);
             // await TryParseSubraces(categoryDTO.Subraces);
             // await TryParseTraits(categoryDTO.Traits);
-            // await TryParseWeaponProperties(categoryDTO.WeaponProperties);
+            
+            // await TryParseWeaponProperties(categoryDTO.WeaponProperties); // ---DONE--- //
         }
 
         // This might be rate locked
@@ -116,10 +120,10 @@ namespace DndParser
                 }
 
                 // Map to Schema
-                SchemaRoot_AbilityScoreDTO exportDTO = MapToSchemaDTOs_AbilityScores(abilityScoreDTOs);
+                SchemaRoot_AbilityScoreDTO exportDTO = SchemaMapper.MapToSchemaDTOs_AbilityScores(abilityScoreDTOs);
                 
                 // Prepare to Print                
-                ExportData(exportDTO);
+                ExportData(exportDTO, "AbilityScores.txt");
             }
             catch(Exception exception)
             {
@@ -143,8 +147,8 @@ namespace DndParser
                 ResultsDTO results_alignments = await GetDTOAtUrl<ResultsDTO>(alignmentsUrl);
                 await AddDTOToList(results_alignments.Results, alignmentDTOs);
 
-                SchemaRoot_AlignmentDTO exportDTO = MapToSchemaDTOs_Alignments(alignmentDTOs);
-                ExportData(exportDTO);
+                SchemaRoot_AlignmentDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Alignments(alignmentDTOs);
+                ExportData(exportDTO, "Alignments.txt");
             }
             catch(Exception exception)
             {
@@ -190,8 +194,8 @@ namespace DndParser
                 ResultsDTO results_conditions = await GetDTOAtUrl<ResultsDTO>(conditionsUrl);
                 await AddDTOToList(results_conditions.Results, conditionDTOs);
 
-                SchemaRoot_ConditionsDTO exportDTO = MapToSchemaDTOs_Conditions(conditionDTOs);
-                ExportData(exportDTO);
+                SchemaRoot_ConditionsDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Conditions(conditionDTOs);
+                ExportData(exportDTO, "Conditions.txt");
             }
             catch(Exception exception)
             {
@@ -214,8 +218,8 @@ namespace DndParser
                 ResultsDTO results_damageTypes = await GetDTOAtUrl<ResultsDTO>(damageTypesUrl);
                 await AddDTOToList(results_damageTypes.Results, damageTypeDTOs);
 
-                SchemaRoot_DamageTypeDTO exportDTO = MapToSchemaDTOs_DamageTypes(damageTypeDTOs);
-                ExportData(exportDTO);
+                SchemaRoot_DamageTypeDTO exportDTO = SchemaMapper.MapToSchemaDTOs_DamageTypes(damageTypeDTOs);
+                ExportData(exportDTO, "DamageTypes.txt");
             }
             catch(Exception exception)
             {
@@ -235,8 +239,18 @@ namespace DndParser
             try
             {
                 ResultsDTO results_equipment = await GetDTOAtUrl<ResultsDTO>(equipmentUrl);
-                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_equipment.Results[0].Url);
-                Console.WriteLine($"Equipment Details: {response}");
+
+                foreach(UrlDTO urlDTO in results_equipment.Results)
+                {
+                    string response = await WebClient.GetDataAtURL(dndBaseUrl, urlDTO.Url);
+
+                    using (StreamWriter writer = new StreamWriter(filePath + "temp.txt", append: true))
+                    {
+                        writer.WriteLine(response);
+                    }
+
+                    Console.WriteLine($"Equipment Details: {response}");
+                }
             }
             catch(Exception exception)
             {
@@ -302,8 +316,8 @@ namespace DndParser
                 ResultsDTO results_languages = await GetDTOAtUrl<ResultsDTO>(languageUrl);
                 await AddDTOToList(results_languages.Results, languageDTOs);
 
-                SchemaRoot_LanguageDTO exportDTO = MapToSchemaDTOs_Languages(languageDTOs);
-                ExportData(exportDTO);
+                SchemaRoot_LanguageDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Languages(languageDTOs);
+                ExportData(exportDTO, "Languages.txt");
             }
             catch(Exception exception)
             {
@@ -347,11 +361,8 @@ namespace DndParser
 
                 ResultsDTO results_magicSchools = await GetDTOAtUrl<ResultsDTO>(magicSchoolsUrl);
                 await AddDTOToList(results_magicSchools.Results, magicSchoolDTOs);
-                SchemaRoot_MagicSchoolDTO exportDTO = MapToSchemaDTOs_MagicSchools(magicSchoolDTOs);
-                ExportData(exportDTO);
-
-                // string response = await WebClient.GetDataAtURL(dndBaseUrl, results_magicSchools.Results[0].Url);
-                // Console.WriteLine($"Magic Schools Details: {response}");
+                SchemaRoot_MagicSchoolDTO exportDTO = SchemaMapper.MapToSchemaDTOs_MagicSchools(magicSchoolDTOs);
+                ExportData(exportDTO, "MagicSchools.txt");
             }
             catch(Exception exception)
             {
@@ -434,9 +445,11 @@ namespace DndParser
         {
             try
             {
+                List<DescriptionDTO> ruleSectionDTOs = new();
                 ResultsDTO results_ruleSections = await GetDTOAtUrl<ResultsDTO>(ruleSectionsUrl);
-                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_ruleSections.Results[0].Url);
-                Console.WriteLine($"Rule Section Details: {response}");
+                await AddDTOToList(results_ruleSections.Results, ruleSectionDTOs);
+                SchemaRoot_RuleSectionDTO exportDTO = SchemaMapper.MapToSchemaDTOs_RuleSections(ruleSectionDTOs);
+                ExportData(exportDTO, "RuleSections.txt");
             }
             catch(Exception exception)
             {
@@ -482,8 +495,8 @@ namespace DndParser
                 await AddDTOToList(results_skills.Results, skillDTOs);
                 await AddSkillAbilityScore(skillDTOs);
 
-                SchemaRoot_SkillDTO exportDTO = MapToSchemaDTOs_Skills(skillDTOs);
-                ExportData(exportDTO);
+                SchemaRoot_SkillDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Skills(skillDTOs);
+                ExportData(exportDTO, "Skills.txt");
             }
             catch(Exception exception)
             {
@@ -595,9 +608,11 @@ namespace DndParser
         {
             try
             {
+                List<DescriptionsDTO> weaponPropertiesDTO = new();
                 ResultsDTO results_weaponProperties = await GetDTOAtUrl<ResultsDTO>(weaponPropertiesUrl);
-                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_weaponProperties.Results[0].Url);
-                Console.WriteLine($"Weapon Properties Details: {response}");
+                await AddDTOToList(results_weaponProperties.Results, weaponPropertiesDTO);
+                SchemaRoot_WeaponPropertyDTO exportDTO = SchemaMapper.MapToSchemaDTOs_WeaponProperties(weaponPropertiesDTO);
+                ExportData(exportDTO, "WeaponProperties.txt");
             }
             catch(Exception exception)
             {
@@ -607,163 +622,6 @@ namespace DndParser
 
         #endregion
 
-        // --------------------------------
-        //	    SCHEMA MAPPING
-	    // --------------------------------
-
-        #region SchemaMapping
-
-        /// This variation is for DTOs with single line descriptions
-        private static void MapToDescriptionSchema(List<DescriptionDTO> generalDTOs, List<SchemaDescriptionDTO> schemaDTOs)
-        {
-            foreach(DescriptionDTO generalDTO in generalDTOs)
-            {
-                SchemaDescriptionDTO newCondition = new();
-                newCondition.Name = generalDTO.Name;
-                newCondition.UpdatedAt = generalDTO.UpdatedAt;
-
-                newCondition.Description = generalDTO.Desc;
-                schemaDTOs.Add(newCondition);
-            }
-        }
-
-        /// This variation is for DTOs with multi-line descriptions
-        private static void MapToDescriptionsSchema(List<DescriptionsDTO> generalDTOs, List<SchemaDescriptionDTO> schemaDTOs)
-        {
-            foreach(DescriptionsDTO generalDTO in generalDTOs)
-            {
-                SchemaDescriptionDTO newCondition = new();
-                newCondition.Name = generalDTO.Name;
-                newCondition.UpdatedAt = generalDTO.UpdatedAt;
-
-                newCondition.Description = string.Join(" ", generalDTO.Desc);
-                schemaDTOs.Add(newCondition);
-            }
-        }
-
-        /// <summary>
-        /// Part of what would be a family of Mapping functions, this one focused on Ability Scores. Assumption: List of Ability Scores and List of Skills are Unsorted
-        /// </summary>
-        /// <param name="scores"></param>
-        /// <param name="skills"></param>
-        private static SchemaRoot_AbilityScoreDTO MapToSchemaDTOs_AbilityScores(List<AbilityScoreDTO> scores)
-        {
-            SchemaRoot_AbilityScoreDTO exportDTO = new();
-
-            foreach(AbilityScoreDTO abScoreDTO in scores)
-            {
-                // Creating the new ability object
-                SchemaAbilityScoreDTO newAbility = new();
-                
-                // Basic 1-1 Mappings
-                newAbility.Name = abScoreDTO.Name;
-                newAbility.FullName = abScoreDTO.FullName;
-                newAbility.UpdatedAt = abScoreDTO.UpdatedAt;
-
-                // Custom Rule for Description: Concatenating array together with space delimiter
-                newAbility.Description = string.Join(" ", abScoreDTO.Desc);
-
-                // Creating and adding proper skill objects
-                newAbility.Skills = new();
-                foreach(DescriptionsDTO skillDetail in abScoreDTO.SkillsDetailed)
-                {                    
-                    SchemaDescriptionDTO newSkill = new();
-                    newSkill.Name = skillDetail.Name;
-                    newSkill.UpdatedAt = skillDetail.UpdatedAt;
-
-                    // Same Custom Rule for Description: Concatenating array together with space delimiter
-                    newSkill.Description = string.Join(" ", skillDetail.Desc);
-                    newAbility.Skills.Add(newSkill);
-                }
-                exportDTO.AbilityScores.Add(newAbility);
-            }
-            return exportDTO;
-        }
-        
-        private static SchemaRoot_AlignmentDTO MapToSchemaDTOs_Alignments(List<AlignmentDTO> alignments)
-        {
-            SchemaRoot_AlignmentDTO exportDTO = new();
-
-            foreach(AlignmentDTO alignmentDTO in alignments)
-            {
-                SchemaAlignmentDTO newAlignment = new();
-                
-                newAlignment.Name = alignmentDTO.Name;
-                newAlignment.Abbreviation = alignmentDTO.Abbreviation;
-                newAlignment.Description = alignmentDTO.Desc;
-                newAlignment.UpdatedAt = alignmentDTO.UpdatedAt;
-
-                exportDTO.Alignments.Add(newAlignment);
-            }
-
-            return exportDTO;
-        }
-
-        private static SchemaRoot_ConditionsDTO MapToSchemaDTOs_Conditions(List<DescriptionsDTO> conditions)
-        {
-            SchemaRoot_ConditionsDTO exportDTO = new();
-            MapToDescriptionsSchema(conditions, exportDTO.Conditions);
-            return exportDTO;
-        }
-
-        private static SchemaRoot_DamageTypeDTO MapToSchemaDTOs_DamageTypes(List<DescriptionsDTO> damageTypes)
-        {
-            SchemaRoot_DamageTypeDTO exportDTO = new();
-            MapToDescriptionsSchema(damageTypes, exportDTO.DamageTypes);
-            return exportDTO;
-        }
-
-        private static SchemaRoot_LanguageDTO MapToSchemaDTOs_Languages(List<LanguageDTO> languages)
-        {
-            SchemaRoot_LanguageDTO exportDTO = new();
-
-            foreach(LanguageDTO languageDTO in languages)
-            {
-                SchemaLanguageDTO newLanguage = new();
-                newLanguage.Name = languageDTO.Name;
-                newLanguage.Type = languageDTO.Type;
-                newLanguage.Script = languageDTO.Script;
-                newLanguage.UpdatedAt = languageDTO.UpdatedAt;
-
-                newLanguage.TypicalSpeakers = string.Join(", ", languageDTO.TypicalSpeakers);
-                exportDTO.Languages.Add(newLanguage);
-            }
-
-            return exportDTO;
-        }
-
-        private static SchemaRoot_MagicSchoolDTO MapToSchemaDTOs_MagicSchools(List<DescriptionDTO> magicSchools)
-        {
-            SchemaRoot_MagicSchoolDTO exportDTO = new();
-            MapToDescriptionSchema(magicSchools, exportDTO.MagicSchools);
-            return exportDTO;
-        }
-
-        private static SchemaRoot_SkillDTO MapToSchemaDTOs_Skills(List<SkillDTO> skills)
-        {
-            SchemaRoot_SkillDTO exportDTO = new();
-
-            foreach(SkillDTO skillDTO in skills)
-            {
-                SchemaSkillDTO newSkill = new();
-                newSkill.Name = skillDTO.Name;
-                newSkill.UpdatedAt = skillDTO.UpdatedAt;
-
-                newSkill.Description = string.Join(" ", skillDTO.Desc);
-
-                newSkill.AbilityScore.Name = skillDTO.AbilityScoreDetailed.Name;
-                newSkill.AbilityScore.FullName = skillDTO.AbilityScoreDetailed.FullName;
-                newSkill.AbilityScore.UpdatedAt = skillDTO.AbilityScoreDetailed.UpdatedAt;
-                newSkill.AbilityScore.Description = string.Join(" ", skillDTO.AbilityScoreDetailed.Desc);
-
-                exportDTO.Skills.Add(newSkill);
-            }
-
-            return exportDTO;
-        }
-
-        #endregion
-        
         // --------------------------------
         //	    UNIVERSAL FUNCTIONS
 	    // --------------------------------
@@ -796,10 +654,15 @@ namespace DndParser
             }
         }
 
-        private static void ExportData<T>(T exportDTO)
+        private static void ExportData<T>(T exportDTO, string fileName)
         {
             JsonSerializerOptions jsonOptions = new JsonSerializerOptions { WriteIndented = true };
             string jsonOutput = JsonSerializer.Serialize(exportDTO, jsonOptions);
+
+            using (StreamWriter writer = new StreamWriter(filePath + fileName, append: true))
+            {
+                writer.WriteLine(jsonOutput);
+            }
 
             Console.WriteLine("\nFinal Payload:");
             Console.WriteLine(jsonOutput);

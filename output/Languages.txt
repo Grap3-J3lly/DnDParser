@@ -1,0 +1,116 @@
+{
+  "languages": [
+    {
+      "name": "Abyssal",
+      "type": "Exotic",
+      "typical_speakers": "Demons",
+      "script": "Infernal",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Celestial",
+      "type": "Exotic",
+      "typical_speakers": "Celestials",
+      "script": "Celestial",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Common",
+      "type": "Standard",
+      "typical_speakers": "Humans",
+      "script": "Common",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Deep Speech",
+      "type": "Exotic",
+      "typical_speakers": "Aboleths, Cloakers",
+      "script": "",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Draconic",
+      "type": "Exotic",
+      "typical_speakers": "Dragons, Dragonborn",
+      "script": "Draconic",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Dwarvish",
+      "type": "Standard",
+      "typical_speakers": "Dwarves",
+      "script": "Dwarvish",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Elvish",
+      "type": "Standard",
+      "typical_speakers": "Elves",
+      "script": "Elvish",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Giant",
+      "type": "Standard",
+      "typical_speakers": "Ogres, Giants",
+      "script": "Dwarvish",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Gnomish",
+      "type": "Standard",
+      "typical_speakers": "Gnomes",
+      "script": "Dwarvish",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Goblin",
+      "type": "Standard",
+      "typical_speakers": "Goblinoids",
+      "script": "Dwarvish",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Halfling",
+      "type": "Standard",
+      "typical_speakers": "Halflings",
+      "script": "Common",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Infernal",
+      "type": "Exotic",
+      "typical_speakers": "Devils",
+      "script": "Infernal",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Orc",
+      "type": "Standard",
+      "typical_speakers": "Orcs",
+      "script": "Dwarvish",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Primordial",
+      "type": "Exotic",
+      "typical_speakers": "Elementals",
+      "script": "Dwarvish",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Sylvan",
+      "type": "Exotic",
+      "typical_speakers": "Fey creatures",
+      "script": "Elvish",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    },
+    {
+      "name": "Undercommon",
+      "type": "Exotic",
+      "typical_speakers": "Underdark traders",
+      "script": "Elvish",
+      "updated_at": "2026-04-01T20:35:37.652Z"
+    }
+  ]
+}

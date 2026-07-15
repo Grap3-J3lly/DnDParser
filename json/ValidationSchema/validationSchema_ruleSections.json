@@ -1,0 +1,48 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties":
+    {
+        "rule-sections":
+        {
+            "type": "array",
+            "items":
+            [
+                {
+                    "type": "object",
+                    "properties":
+                    {
+                        "name":
+                        {
+                            "type": "string",
+                            "description": "The 'name' attribute of the rule sections"
+                        },
+                        "description":
+                        {
+                            "type": "string",
+                            "description": "The 'description' attribute of the rule sections"
+                        },
+                        "updated_at":
+                        {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The 'updated_at' attribute of the rule sections"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required":
+                    [
+                        "name",
+                        "description",
+                        "updated_at"
+                    ]
+                }
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "required":
+    [
+        "rule-sections"
+    ]
+}
