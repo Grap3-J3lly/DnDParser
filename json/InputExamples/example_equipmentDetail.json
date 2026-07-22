@@ -1,46 +1,56 @@
 {
-    "special":
-    [
-        "You have disadvantage when you use a lance to attack a target within 5 feet of you. Also, a lance requires two hands to wield when you aren't mounted."
-    ],
     "index": "acid-vial",
     "name": "Acid (vial)",
-    "equipment_category":
-    {
-        "index": "adventuring-gear",
-        "name": "Adventuring Gear",
-        "url": "/api/2014/equipment-categories/adventuring-gear"
-    },
+    "image": "/api/images/equipment/crossbow-heavy.png",
+    "url": "/api/2014/equipment/acid-vial",
+    "updated_at": "2026-04-01T20:35:37.141Z",
     "armor_category": "Medium",
+    "weapon_category": "Martial",
+    "weapon_range": "Ranged",
+    "category_range": "Martial Ranged",
+    "vehicle_category": "Mounts and Other Animals",
+    "capacity": "480 lb.",
+    "stealth_disadvantage": false,
+    "weight": 1,
+    "str_minimum": 0,
+    "quantity": 20,
     "armor_class":
     {
         "base": 14,
         "dex_bonus": true,
         "max_bonus": 2
     },
-    "str_minimum": 0,
-    "stealth_disadvantage": false,
-    "gear_category":
+    "cost":
     {
-        "index": "standard-gear",
-        "name": "Standard Gear",
-        "url": "/api/2014/equipment-categories/standard-gear"
+        "quantity": 25,
+        "unit": "gp"
     },
-    "weapon_category": "Martial",
-    "weapon_range": "Ranged",
-    "category_range": "Martial Ranged",
-    "vehicle_category": "Mounts and Other Animals",
     "speed":
     {
         "quantity": 50,
         "unit": "ft/round"
     },
-    "capacity": "480 lb.",
-    "quantity": 20,
-    "cost":
+    "range":
     {
-        "quantity": 25,
-        "unit": "gp"
+        "normal": 100,
+        "long": 400
+    },
+    "throw_range":
+    {
+        "normal": 5,
+        "long": 15
+    },
+    "equipment_category":
+    {
+        "index": "adventuring-gear",
+        "name": "Adventuring Gear",
+        "url": "/api/2014/equipment-categories/adventuring-gear"
+    },
+    "gear_category":
+    {
+        "index": "standard-gear",
+        "name": "Standard Gear",
+        "url": "/api/2014/equipment-categories/standard-gear"
     },
     "damage":
     {
@@ -62,21 +72,14 @@
             "url": "/api/2014/damage-types/slashing"
         }
     },
-    "range":
-    {
-        "normal": 100,
-        "long": 400
-    },
-    "weight": 1,
-    "throw_range":
-    {
-        "normal": 5,
-        "long": 15
-    },
     "desc":
     [
         "As an action, you can splash the contents of this vial onto a creature within 5 feet of you or throw the vial up to 20 feet, shattering it on impact. In either case, make a ranged attack against a creature or object, treating the acid as an improvised weapon.",
         "On a hit, the target takes 2d6 acid damage."
+    ],
+    "special":
+    [
+        "You have disadvantage when you use a lance to attack a target within 5 feet of you. Also, a lance requires two hands to wield when you aren't mounted."
     ],
     "contents":
     [
@@ -166,8 +169,5 @@
             "name": "Two-Handed",
             "url": "/api/2014/weapon-properties/two-handed"
         }
-    ],
-    "image": "/api/images/equipment/crossbow-heavy.png",
-    "url": "/api/2014/equipment/acid-vial",
-    "updated_at": "2026-04-01T20:35:37.141Z"
+    ]
 }

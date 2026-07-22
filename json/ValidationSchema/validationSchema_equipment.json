@@ -1,0 +1,471 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties":
+    {
+        "equipment":
+        {
+            "type": "array",
+            "items":
+            [
+                {
+                    "type": "object",
+                    "properties":
+                    {
+                        "name":
+                        {
+                            "type": "string",
+                            "description": "The 'name' attribute of the equipment"
+                        },
+                        "image":
+                        {
+                            "type": "string",
+                            "description": "The 'image' attribute of the equipment"
+                        },
+                        "description":
+                        {
+                            "type": "string",
+                            "description": "The 'description' attribute of the equipment, concatenated with a space delimiter"
+                        },
+                        "special":
+                        {
+                            "type":"string",
+                            "description": "The 'special' attribute of the equipment, concatenated with a space delimiter"
+                        },
+                        "updated_at":
+                        {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The 'updated_at' attribute of the equipment"
+                        },
+                        "armor_category":
+                        {
+                            "type":"string",
+                            "description": "The 'armor_category' attribute of the equipment"
+                        },
+                        "weapon_category":
+                        {
+                            "type":"string",
+                            "description": "The 'weapon_category' attribute of the equipment"
+                        },
+                        "weapon_range":
+                        {
+                            "type":"string",
+                            "description": "The 'weapon_range' attribute of the equipment"
+                        },
+                        "category_range":
+                        {
+                            "type":"string",
+                            "description": "The 'category_range' attribute of the equipment"
+                        },
+                        "vehicle_category":
+                        {
+                            "type":"string",
+                            "description": "The 'vehicle_category' attribute of the equipment"
+                        },
+                        "capacity":
+                        {
+                            "type":"string",
+                            "description": "The 'capacity' attribute of the equipment"
+                        },
+                        "stealth_disadvantage":
+                        {
+                            "type":"boolean",
+                            "description": "The 'stealth_disadvantage' attribute of the equipment"
+                        },
+                        "weight":
+                        {
+                            "type":"number",
+                            "description": "The 'weight' attribute of the equipment"
+                        },
+                        "str_minimum":
+                        {
+                            "type":"integer",
+                            "description": "The 'str_minimum' attribute of the equipment"
+                        },
+                        "quantity":
+                        {
+                            "type":"integer",
+                            "description": "The 'quantity' attribute of the equipment"
+                        },
+                        "armor_class":
+                        {
+                            "type":"object",
+                            "properties": 
+                            {
+                                "base":
+                                {
+                                    "type":"integer",
+                                    "description": "The 'base' attribute of the armor class"
+                                },
+                                "dex_bonus":
+                                {
+                                    "type":"boolean",
+                                    "description": "The 'dex_bonus' attribute of the armor class"
+                                },
+                                "max_bonus":
+                                {
+                                    "type":"integer",
+                                    "description": "The 'max_bonus' attribute of the armor class"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "base",
+                                "dex_bonus",
+                                "max_bonus"
+                            ]
+                        },
+                        "cost":
+                        {
+                            "type":"object",
+                            "properties": 
+                            {
+                                "quantity":
+                                {
+                                    "type":"number",
+                                    "description": "The 'quantity' attribute of the cost"
+                                },
+                                "unit":
+                                {
+                                    "type":"string",
+                                    "description": "The 'unit' attribute of the cost"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "quantity",
+                                "unit"
+                            ]
+                        },
+                        "speed":
+                        {
+                            "type":"object",
+                            "properties": 
+                            {
+                                "quantity":
+                                {
+                                    "type":"number",
+                                    "description": "The 'quantity' attribute of the speed"
+                                },
+                                "unit":
+                                {
+                                    "type":"string",
+                                    "description": "The 'unit' attribute of the speed"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "quantity",
+                                "unit"
+                            ]
+                        },
+                        "range":
+                        {
+                            "type":"object",
+                            "properties": 
+                            {
+                                "normal":
+                                {
+                                    "type":"integer",
+                                    "description": "The 'normal' attribute of the range"
+                                },
+                                "long":
+                                {
+                                    "type":"integer",
+                                    "description": "The 'long' attribute of the range"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "normal",
+                                "long"
+                            ]
+                        },
+                        "throw_range":
+                        {
+                            "type":"object",
+                            "properties": 
+                            {
+                                "normal":
+                                {
+                                    "type":"integer",
+                                    "description": "The 'normal' attribute of the throw range"
+                                },
+                                "long":
+                                {
+                                    "type":"integer",
+                                    "description": "The 'long' attribute of the throw range"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "normal",
+                                "long"
+                            ]
+                        },
+                        "equipment_category":
+                        {
+                            "type": "object",
+                            "properties":
+                            {
+                                "name":
+                                {
+                                    "type": "string",
+                                    "description": "The 'name' attribute of the equipment category"
+                                },
+                                "description":
+                                {
+                                    "type": "string",
+                                    "description": "The 'description' attribute of the equipment category, concatenated with a space delimiter"
+                                },
+                                "updated_at":
+                                {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "The 'updated_at' attribute of the equipment category"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "name",
+                                "description",
+                                "updated_at"
+                            ]
+                        },
+                        "gear_category":
+                        {
+                            "type": "object",
+                            "properties":
+                            {
+                                "name":
+                                {
+                                    "type": "string",
+                                    "description": "The 'name' attribute of the gear category"
+                                },
+                                "description":
+                                {
+                                    "type": "string",
+                                    "description": "The 'description' attribute of the gear category, concatenated with a space delimiter"
+                                },
+                                "updated_at":
+                                {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "The 'updated_at' attribute of the gear category"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "name",
+                                "description",
+                                "updated_at"
+                            ]
+                        },
+                        "damage":
+                        {
+                            "type":["object","null"],
+                            "properties": 
+                            {
+                                "damage_dice":
+                                {
+                                    "type":"string",
+                                    "description": "The 'damage_dice' attribute of the damage"
+                                },
+                                "damage_type":
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "name":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'name' attribute of the damage type"
+                                        },
+                                        "description":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'description' attribute of the damage type, concatenated with a space delimiter"
+                                        },
+                                        "updated_at":
+                                        {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "description": "The 'updated_at' attribute of the damage type"
+                                        }
+                                    },
+                                    "additionalProperties": false,
+                                    "required":
+                                    [
+                                        "name",
+                                        "description"
+                                    ]
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "damage_dice",
+                                "damage_type"
+                            ]
+                        },
+                        "two_handed_damage":
+                        {
+                            "type":["object","null"],
+                            "properties": 
+                            {
+                                "damage_dice":
+                                {
+                                    "type":"string",
+                                    "description": "The 'damage_dice' attribute of the two handed damage"
+                                },
+                                "damage_type":
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "name":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'name' attribute of the damage type"
+                                        },
+                                        "description":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'description' attribute of the damage type, concatenated with a space delimiter"
+                                        },
+                                        "updated_at":
+                                        {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "description": "The 'updated_at' attribute of the damage type"
+                                        }
+                                    },
+                                    "additionalProperties": false,
+                                    "required":
+                                    [
+                                        "name",
+                                        "description"
+                                    ]
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "damage_dice",
+                                "damage_type"
+                            ]
+                        },
+                        "content":
+                        {
+                            "type":"array",
+                            "items":
+                            [
+                                {
+                                    "type":"object",
+                                    "properties": 
+                                    {
+                                        "name":
+                                        {
+                                            "type":"string",
+                                            "description": "The 'name' attribute of the item"
+                                        },
+                                        "quantity":
+                                        {
+                                            "type":"integer",
+                                            "description": "The 'quantity' attribute of the item"
+                                        }
+                                    },
+                                    "additionalProperties": false,
+                                    "required":
+                                    [
+                                        "name",
+                                        "quantity"
+                                    ]
+                                }
+                            ]
+                        },
+                        "properties":
+                        {
+                            "type":"array",
+                            "items":
+                            [
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "name":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'name' attribute of the weapon properties"
+                                        },
+                                        "description":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'description' attribute of the weapon properties, concatenated with a space delimiter"
+                                        },
+                                        "updated_at":
+                                        {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "description": "The 'updated_at' attribute of the weapon properties"
+                                        }
+                                    },
+                                    "additionalProperties": false,
+                                    "required":
+                                    [
+                                        "name",
+                                        "description",
+                                        "updated_at"
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required":
+                    [
+                        "name",
+                        "image",
+                        "description",
+                        "special",
+                        "updated_at",
+                        "armor_category",
+                        "weapon_category",
+                        "weapon_range",
+                        "category_range",
+                        "vehicle_category",
+                        "capacity",
+                        "stealth_disadvantage",
+                        "weight",
+                        "str_minimum",
+                        "quantity",
+                        "armor_class",
+                        "cost",
+                        "speed",
+                        "range",
+                        "throw_range",
+                        "equipment_category",
+                        "gear_category",
+                        "damage",
+                        "two_handed_damage",
+                        "content",
+                        "properties"
+                    ]
+                }
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "required":
+    [
+        "equipment"
+    ]
+}

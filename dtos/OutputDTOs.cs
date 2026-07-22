@@ -5,6 +5,10 @@ namespace DndParser
     //	    GENERALIZED DTOs
     // --------------------------------
 
+    // TODO: May need to look into making Universal DTOs - DTOs shared by Input *and* Output
+    // TODO: May also need to look into keeping as hash of loaded URLs to 
+    // prevent future double loading and increase application speed
+
     public class SchemaDescriptionDTO
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
@@ -18,6 +22,18 @@ namespace DndParser
         [JsonPropertyName("full_name")] public string FullName { get; set; } = string.Empty;
         [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+    }
+
+    public class SchemaAmountDTO
+    {
+        [JsonPropertyName("quantity")] public float Quantity { get; set; } = 0.0f;
+        [JsonPropertyName("unit")] public string Unit { get; set; } = string.Empty;
+    }
+
+    public class SchemaDistanceDTO
+    {
+        [JsonPropertyName("normal")] public int Normal { get; set; } = 0;
+        [JsonPropertyName("long")] public int Long { get; set; } = 0;
     }
 
     // --------------------------------
@@ -85,8 +101,71 @@ namespace DndParser
     #endregion
 
     // --------------------------------
+    //	    EQUIPMENT DTOs
+    // --------------------------------
+    #region Equipment DTOs
+
+    public class SchemaRoot_EquipmentDTO
+    {
+        [JsonPropertyName("equipment")] public List<SchemaEquipmentDTO> Equipment { get; set; } = new();
+    }
+
+    public class SchemaEquipmentDTO
+    {
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("image")] public string Image { get; set; } = string.Empty;
+        [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
+        [JsonPropertyName("special")] public string Special { get; set; } = string.Empty;
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+        [JsonPropertyName("armor_category")] public string ArmorCategory { get; set; } = string.Empty;
+        [JsonPropertyName("weapon_category")] public string WeaponCategory { get; set; } = string.Empty;
+        [JsonPropertyName("weapon_range")] public string WeaponRange { get; set; } = string.Empty;
+        [JsonPropertyName("category_range")] public string CategoryRange { get; set; } = string.Empty;
+        [JsonPropertyName("vehicle_category")] public string VehicleCategory { get; set; } = string.Empty;
+        [JsonPropertyName("capacity")] public string Capacity { get; set; } = string.Empty;
+        [JsonPropertyName("stealth_disadvantage")] public bool StealthDisadvantage { get; set; } = false;
+        [JsonPropertyName("weight")] public float Weight { get; set; } = 0.0f;
+        [JsonPropertyName("str_minimum")] public int StrMinimum { get; set; } = 0;
+        [JsonPropertyName("quantity")] public int Quantity { get; set; } = 0;
+        [JsonPropertyName("armor_class")] public SchemaEquipment_ArmorClassDTO ArmorClass { get; set; } = new();
+        [JsonPropertyName("cost")] public SchemaAmountDTO Cost { get; set; } = new();
+        [JsonPropertyName("speed")] public SchemaAmountDTO Speed { get; set; } = new();
+        [JsonPropertyName("range")] public SchemaDistanceDTO Range { get; set; } = new();
+        [JsonPropertyName("throw_range")] public SchemaDistanceDTO ThrowRange { get; set; } = new();
+        [JsonPropertyName("equipment_category")] public SchemaDescriptionDTO EquipmentCategory { get; set; } = new();
+        [JsonPropertyName("gear_category")] public SchemaDescriptionDTO GearCategory { get; set; } = new();
+        [JsonPropertyName("damage")] public SchemaEquipment_DamageDTO Damage { get; set; }
+        [JsonPropertyName("two_handed_damage")] public SchemaEquipment_DamageDTO TwoHandedDamage { get; set; }
+        [JsonPropertyName("content")] public List<SchemaEquipment_ContentDTO> Content { get; set; } = new();
+        [JsonPropertyName("properties")] public List<SchemaDescriptionDTO> Properties { get; set; } = new();
+    }
+
+    public class SchemaEquipment_ArmorClassDTO
+    {
+        [JsonPropertyName("base")] public int Base { get; set; } = 0;
+        [JsonPropertyName("dex_bonus")] public bool DexBonus { get; set; } = false;
+        [JsonPropertyName("max_bonus")] public int MaxBonus { get; set; } = 0;
+    }
+
+    public class SchemaEquipment_DamageDTO
+    {
+        [JsonPropertyName("damage_dice")] public string DamageDice { get; set; } = string.Empty;
+        [JsonPropertyName("damage_type")] public SchemaDescriptionDTO DamageType { get; set; } = new();
+    }
+
+    public class SchemaEquipment_ContentDTO
+    {
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("quantity")] public int Quantity { get; set; } = 0;
+    }
+
+    #endregion
+
+    // --------------------------------
     //	    LANGUAGE DTOs
     // --------------------------------
+
+    #region Language Type DTOs
 
     public class SchemaRoot_LanguageDTO
     {
@@ -101,6 +180,8 @@ namespace DndParser
         [JsonPropertyName("script")] public string Script { get; set; } = string.Empty;
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
+
+    #endregion
 
     // --------------------------------
     //	    MAGIC SCHOOL DTOs

@@ -238,23 +238,65 @@ namespace DndParser
         {
             try
             {
+                List<EquipmentDTO> equipmentDTOs = new();
                 ResultsDTO results_equipment = await GetDTOAtUrl<ResultsDTO>(equipmentUrl);
+                await AddDTOToList(results_equipment.Results, equipmentDTOs);
 
-                foreach(UrlDTO urlDTO in results_equipment.Results)
-                {
-                    string response = await WebClient.GetDataAtURL(dndBaseUrl, urlDTO.Url);
-
-                    using (StreamWriter writer = new StreamWriter(filePath + "temp.txt", append: true))
-                    {
-                        writer.WriteLine(response);
-                    }
-
-                    Console.WriteLine($"Equipment Details: {response}");
-                }
+                // TODO: May need to wrap these in Try/Catch, since not every Equipment Item has every property
+                await AddEquipmentDTODetails(equipmentDTOs);
+                
+                SchemaRoot_EquipmentDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Equipment(equipmentDTOs);
+                ExportData(exportDTO, "Equipment.txt");
             }
             catch(Exception exception)
             {
                 Console.WriteLine($"Caught unexpected exception: {exception}");
+            }
+        }
+
+        private static async Task AddEquipmentDTODetails(List<EquipmentDTO> equipmentDTOs)
+        {
+            foreach(EquipmentDTO equipmentDTO in equipmentDTOs)
+            {
+                // Console.WriteLine($"Parser.cs: Parsing Equipment Item: {equipmentDTO.Name}");
+
+                // Loading in Equipment Categories
+                equipmentDTO.EquipmentCategoryDetail = await GetDTOAtUrl<DescriptionDTO>(equipmentDTO.EquipmentCategory.Url);
+
+                // Try Loading in Gear Categories
+                try
+                {
+                    equipmentDTO.GearCategoryDetail = await GetDTOAtUrl<DescriptionDTO>(equipmentDTO.GearCategory.Url);
+                }
+                catch(Exception x)
+                {
+                    Console.WriteLine($"Parser.cs: No Gear Category DTOs to load");
+                }
+
+                // Try Loading in Equipment_DamageDTOs for Damage
+                try
+                {
+                    equipmentDTO.Damage.DamageTypeDetail = await GetDTOAtUrl<DescriptionsDTO>(equipmentDTO.Damage.DamageType.Url);
+                }
+                catch(Exception x)
+                {
+                    Console.WriteLine($"Parser.cs: No Damage DTOs to load");
+                }
+                
+                // Try Loading in Equipment_DamageDTOs for Two-Handed Damage
+                try
+                {
+                    equipmentDTO.TwoHandedDamage.DamageTypeDetail = await GetDTOAtUrl<DescriptionsDTO>(equipmentDTO.TwoHandedDamage.DamageType.Url);
+                }
+                catch(Exception x)
+                {
+                    Console.WriteLine($"Parser.cs: No Two Handed Damage DTOs to load");
+                }
+                
+                // Loading in Properties
+                List<DescriptionsDTO> propertiesDTO = new();
+                await AddDTOToList(equipmentDTO.Properties, propertiesDTO);
+                equipmentDTO.PropertiesDetail = propertiesDTO;
             }
         }
 

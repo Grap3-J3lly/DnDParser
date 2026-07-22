@@ -115,6 +115,105 @@ namespace DndParser
             return exportDTO;
         }
 
+        internal static SchemaRoot_EquipmentDTO MapToSchemaDTOs_Equipment(List<EquipmentDTO> equipment)
+        {
+            SchemaRoot_EquipmentDTO exportDTO = new();
+
+            foreach(EquipmentDTO equipmentDTO in equipment)
+            {
+                SchemaEquipmentDTO newEquipment = new();
+
+                // 1-to-1 assignments
+                newEquipment.Name = equipmentDTO.Name;
+                newEquipment.Image = equipmentDTO.Image;
+                newEquipment.UpdatedAt = equipmentDTO.UpdatedAt;
+                newEquipment.ArmorCategory = equipmentDTO.ArmorCategory;
+                newEquipment.WeaponCategory = equipmentDTO.WeaponCategory;
+                newEquipment.WeaponRange = equipmentDTO.WeaponRange;
+                newEquipment.CategoryRange = equipmentDTO.CategoryRange;
+                newEquipment.VehicleCategory = equipmentDTO.VehicleCategory;
+                newEquipment.Capacity = equipmentDTO.Capacity;
+                newEquipment.StealthDisadvantage = equipmentDTO.StealthDisadvantage;
+                newEquipment.Weight = equipmentDTO.Weight;
+                newEquipment.StrMinimum = equipmentDTO.StrMinimum;
+                newEquipment.Quantity = equipmentDTO.Quantity;
+
+                // Array to String Concatenation Assignment
+                newEquipment.Description = string.Join(" ", equipmentDTO.Desc);
+                newEquipment.Special = string.Join(" ", equipmentDTO.Special);
+                
+                // Armor Class Assignment
+                newEquipment.ArmorClass.Base = equipmentDTO.ArmorClass.Base;
+                newEquipment.ArmorClass.DexBonus = equipmentDTO.ArmorClass.DexBonus;
+                newEquipment.ArmorClass.MaxBonus = equipmentDTO.ArmorClass.MaxBonus;
+
+                // Cost Assignment
+                newEquipment.Cost.Quantity = equipmentDTO.Cost.Quantity;
+                newEquipment.Cost.Unit = equipmentDTO.Cost.Unit;
+
+                // Speed Assignment
+                newEquipment.Speed.Quantity = equipmentDTO.Speed.Quantity;
+                newEquipment.Speed.Unit = equipmentDTO.Speed.Unit;
+
+                // Range Assignment
+                newEquipment.Range.Normal = equipmentDTO.Range.Normal;
+                newEquipment.Range.Long = equipmentDTO.Range.Long;
+
+                // Throw Range Assignment
+                newEquipment.ThrowRange.Normal = equipmentDTO.ThrowRange.Normal;
+                newEquipment.ThrowRange.Long = equipmentDTO.ThrowRange.Long;
+
+                // Equipment Category Assignment
+                newEquipment.EquipmentCategory.Name = equipmentDTO.EquipmentCategoryDetail.Name;
+                newEquipment.EquipmentCategory.UpdatedAt = equipmentDTO.EquipmentCategoryDetail.UpdatedAt;
+
+                // Gear Category Assignment
+                newEquipment.GearCategory.Name = equipmentDTO.GearCategoryDetail.Name;
+                newEquipment.GearCategory.UpdatedAt = equipmentDTO.GearCategoryDetail.UpdatedAt;
+
+                // Damage Assignment
+                string damageUpdatedAt = equipmentDTO.Damage.DamageTypeDetail.UpdatedAt;
+                if(!string.IsNullOrEmpty(damageUpdatedAt))
+                {
+                    if(equipmentDTO.Damage.DamageTypeDetail.Desc == null)
+                    {
+                        Console.WriteLine($"SchemaMapper.cs: UpdatedAt for Null Desc: {equipmentDTO.Damage.DamageTypeDetail.UpdatedAt}");
+                    }
+                    newEquipment.Damage = new();
+                    newEquipment.Damage.DamageDice = equipmentDTO.Damage.DamageDice;
+                    newEquipment.Damage.DamageType.Name = equipmentDTO.Damage.DamageTypeDetail.Name;
+                    newEquipment.Damage.DamageType.UpdatedAt = equipmentDTO.Damage.DamageTypeDetail.UpdatedAt;
+                    newEquipment.Damage.DamageType.Description = string.Join(" ", equipmentDTO.Damage.DamageTypeDetail.Desc);
+                }
+
+                // Two Handed Damage Assignment
+                string twoHandedDamageUpdatedAt = equipmentDTO.TwoHandedDamage.DamageTypeDetail.UpdatedAt;
+                if(!string.IsNullOrEmpty(twoHandedDamageUpdatedAt))
+                {
+                    newEquipment.TwoHandedDamage = new();
+                    newEquipment.TwoHandedDamage.DamageDice = equipmentDTO.TwoHandedDamage.DamageDice;
+                    newEquipment.TwoHandedDamage.DamageType.Name = equipmentDTO.TwoHandedDamage.DamageTypeDetail.Name;
+                    newEquipment.TwoHandedDamage.DamageType.UpdatedAt = equipmentDTO.TwoHandedDamage.DamageTypeDetail.UpdatedAt;
+                    newEquipment.TwoHandedDamage.DamageType.Description = string.Join(" ", equipmentDTO.TwoHandedDamage.DamageTypeDetail.Desc);
+                }
+
+                // Content Assignment
+                foreach(Equipment_ContentDTO contentDTO in equipmentDTO.Contents)
+                {
+                    SchemaEquipment_ContentDTO newContentDTO = new();
+                    newContentDTO.Name = contentDTO.Item.Name;
+                    newContentDTO.Quantity = contentDTO.Quantity;
+                    newEquipment.Content.Add(newContentDTO);
+                }
+
+                // Properties Assignment
+                MapToDescriptionsSchema(equipmentDTO.PropertiesDetail, newEquipment.Properties);
+                exportDTO.Equipment.Add(newEquipment);
+            }
+
+            return exportDTO;
+        }
+
         internal static SchemaRoot_LanguageDTO MapToSchemaDTOs_Languages(List<LanguageDTO> languages)
         {
             SchemaRoot_LanguageDTO exportDTO = new();
