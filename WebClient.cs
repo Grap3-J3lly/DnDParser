@@ -30,6 +30,18 @@ namespace DndParser
             return client;
         }
 
+        public static async Task<string[]> GetDataAtURLBulk(string baseURL, List<string> urls)
+        {
+            using(HttpClient client = CreateBasicHttpClient())
+            {
+                // Create an array of tasks that will run concurrently
+                IEnumerable<Task<string>> tasks = urls.Select(url => client.GetStringAsync(baseURL + url));
+
+                // Await all tasks to finish and collect their results
+                return await Task.WhenAll(tasks);
+            }
+        }
+
         /// <summary>
         /// Asynchronously retrieves data from the specified URL and stores the response in the WebClient instance.
         /// </summary>

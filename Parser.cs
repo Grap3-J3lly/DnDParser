@@ -3,6 +3,7 @@
 // (Ability Scores vs. Races vs. Classes etc.) having their own files.
 
 using System.Text.Json;
+using System.Diagnostics;
 
 namespace DndParser
 {
@@ -38,47 +39,78 @@ namespace DndParser
             // - Subraces
             // - Races
 
+            // TODO: Replace All Results Processing with Bulk Load Call
+
             CategoryDTO categoryDTO = await GetDTOAtUrl<CategoryDTO>(apiYear2014);
-            // await TryParseAbilityScores(categoryDTO.AbilityScores); // ---DONE--- //
-            // await TryParseAlignments(categoryDTO.Alignments); // ---DONE--- //
-            // await TryParseBackgrounds(categoryDTO.Backgrounds); // TBD
+
+            long startTime = Stopwatch.GetTimestamp();
+
+            // await TryParseAbilityScores(categoryDTO.AbilityScores);                                      // ---DONE--- //
+            // await TryParseAlignments(categoryDTO.Alignments);                                            // ---DONE--- //
+            // await TryParseBackgrounds(categoryDTO.Backgrounds);                                          // TBD
             // ResultsDTO results_backgrounds = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Backgrounds);
 
             // await TryParseClasses(categoryDTO.Classes);
             
-            // await TryParseConditions(categoryDTO.Conditions); // ---DONE--- //
-            // await TryParseDamageTypes(categoryDTO.DamageTypes); // ---DONE--- //
+            // await TryParseConditions(categoryDTO.Conditions);                                            // ---DONE--- //
+            // await TryParseDamageTypes(categoryDTO.DamageTypes);                                          // ---DONE--- //
 
-            await TryParseEquipment(categoryDTO.Equipment);
+            // await TryParseEquipment(categoryDTO.Equipment);                                              // ---DONE--- //
             // await TryParseEquipmentCategories(categoryDTO.EquipmentCategories);
             
-            // await TryParseFeats(categoryDTO.Feats); // TBD
+            // await TryParseFeats(categoryDTO.Feats);                                                      // TBD
             // ResultsDTO results_feats = await GetDTOAtUrl<ResultsDTO>(categoryDTO.Feats);
             
             // await TryParseFeatures(categoryDTO.Features);
 
-            // await TryParseLanguages(categoryDTO.Languages); // ---DONE--- //
+            // await TryParseLanguages(categoryDTO.Languages);                                              // ---DONE--- //
 
             // await TryParseMagicItems(categoryDTO.MagicItems);
 
-            // await TryParseMagicSchools(categoryDTO.MagicSchools); // ---DONE--- //
+            // await TryParseMagicSchools(categoryDTO.MagicSchools);                                        // ---DONE--- //
 
             // await TryParseMonsters(categoryDTO.Monsters);
             // await TryParseProficiencies(categoryDTO.Proficiencies);
             // await TryParseRaces(categoryDTO.Races);
             
-            // await TryParseRuleSections(categoryDTO.RuleSections); // ---DONE--- //
+            // await TryParseRuleSections(categoryDTO.RuleSections);                                        // ---DONE--- //
             
             // await TryParseRules(categoryDTO.Rules);
             
-            // await TryParseSkills(categoryDTO.Skills); // ---DONE--- //
+            // await TryParseSkills(categoryDTO.Skills);                                                    // ---DONE--- //
             
             // await TryParseSpells(categoryDTO.Spells);
             // await TryParseSubclasses(categoryDTO.Subclasses);
             // await TryParseSubraces(categoryDTO.Subraces);
             // await TryParseTraits(categoryDTO.Traits);
             
-            // await TryParseWeaponProperties(categoryDTO.WeaponProperties); // ---DONE--- //
+            await TryParseWeaponProperties(categoryDTO.WeaponProperties);                                // ---DONE--- //
+
+            long endTime = Stopwatch.GetTimestamp();
+            TimeSpan elapsed = Stopwatch.GetElapsedTime(startTime, endTime);
+            Console.WriteLine($"Execution Time: {elapsed.TotalMilliseconds} ms");
+            Console.WriteLine($"Execution Time: {elapsed.TotalSeconds} s");
+            Console.WriteLine($"Execution Time: {elapsed.TotalMinutes} minutes");
+
+            // Previous Runtime for all Equipment Loading:
+            // MS: 295395.3763
+            // Seconds: 295.3953763
+            // Minutes: 4.9232562717
+
+            // Current Runtime for all Equipment Loading:
+            // MS: 7578.653
+            // Seconds: 7.578653
+            // Minutes: 0.12631088333333335
+
+            // Previous Runtime for EquipmentDTO Assignment:
+            // MS: 233056.2671
+            // Seconds: 233.0562671
+            // Minutes: 3.8842711183333334
+
+            // Current Runtime for EquipmentDTO Assignment:
+            // MS: 7889.0775
+            // Seconds: 7.8890775
+            // Minutes: 0.131484625
         }
 
         // This might be rate locked
@@ -100,7 +132,7 @@ namespace DndParser
         /// </summary>
         /// <param name="client"></param>
         /// <returns></returns>
-        private static async Task TryParseAbilityScores(string abilityScoresUrl)
+        private static async Task TryParseAbilityScores(string abilityScoresUrl) // Execution Time: ~.64s
         {
             try
             {
@@ -108,16 +140,13 @@ namespace DndParser
                 List<AbilityScoreDTO> abilityScoreDTOs = new();
 
                 // Get initial list of scores
-                ResultsDTO resultsDTO = await GetDTOAtUrl<ResultsDTO>(abilityScoresUrl);
+                ResultsDTO results_abilityScores = await GetDTOAtUrl<ResultsDTO>(abilityScoresUrl);
 
                 // Load and store the full score details
-                await AddDTOToList(resultsDTO.Results, abilityScoreDTOs);
+                await BulkLoadDTOToList(results_abilityScores.Results, abilityScoreDTOs);
 
                 // Load and store all skill details
-                foreach(AbilityScoreDTO scoreDTO in abilityScoreDTOs)
-                {
-                    await AddDTOToList(scoreDTO.Skills, scoreDTO.SkillsDetailed);
-                }
+                await AddAbilityScoreSkills(abilityScoreDTOs);
 
                 // Map to Schema
                 SchemaRoot_AbilityScoreDTO exportDTO = SchemaMapper.MapToSchemaDTOs_AbilityScores(abilityScoreDTOs);
@@ -131,6 +160,27 @@ namespace DndParser
             }
         }
 
+        private static async Task AddAbilityScoreSkills(List<AbilityScoreDTO> abilityScoreDTOs)
+        {
+            List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
+            foreach(AbilityScoreDTO scoreDTO in abilityScoreDTOs)
+                {
+                    // await AddDTOToList(scoreDTO.Skills, scoreDTO.SkillsDetailed);
+
+                    string focusUrl;
+                    for(int index = 0; index < scoreDTO.Skills.Count; index++)
+                    {
+                        focusUrl = scoreDTO.Skills[index].Url;
+                        dtosToLoad.Add((
+                            result => scoreDTO.SkillsDetailed.Add((DescriptionsDTO)result),
+                            typeof(DescriptionsDTO),
+                            focusUrl
+                        ));
+                    }
+                }
+                await BulkLoadDTOToTuple(dtosToLoad);
+        }
+
         #endregion
 
         // --------------------------------
@@ -138,14 +188,14 @@ namespace DndParser
 	    // --------------------------------
         #region Alignments
 
-        private static async Task TryParseAlignments(string alignmentsUrl)
+        private static async Task TryParseAlignments(string alignmentsUrl) // Execution Time: ~.38s
         {
             try
             {
                 List<AlignmentDTO> alignmentDTOs = new();
-
                 ResultsDTO results_alignments = await GetDTOAtUrl<ResultsDTO>(alignmentsUrl);
-                await AddDTOToList(results_alignments.Results, alignmentDTOs);
+
+                await BulkLoadDTOToList(results_alignments.Results, alignmentDTOs);
 
                 SchemaRoot_AlignmentDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Alignments(alignmentDTOs);
                 ExportData(exportDTO, "Alignments.txt");
@@ -185,14 +235,14 @@ namespace DndParser
 	    // --------------------------------
         #region Conditions
 
-        private static async Task TryParseConditions(string conditionsUrl)
+        private static async Task TryParseConditions(string conditionsUrl) // Execution Time: ~.41s
         {
             try
             {
                 List<DescriptionsDTO> conditionDTOs = new();
-
                 ResultsDTO results_conditions = await GetDTOAtUrl<ResultsDTO>(conditionsUrl);
-                await AddDTOToList(results_conditions.Results, conditionDTOs);
+
+                await BulkLoadDTOToList(results_conditions.Results, conditionDTOs);
 
                 SchemaRoot_ConditionsDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Conditions(conditionDTOs);
                 ExportData(exportDTO, "Conditions.txt");
@@ -210,13 +260,14 @@ namespace DndParser
 	    // --------------------------------
         #region DamageTypes
 
-        private static async Task TryParseDamageTypes(string damageTypesUrl)
+        private static async Task TryParseDamageTypes(string damageTypesUrl) // Execution Time: ~.42s
         {
             try
             {
                 List<DescriptionsDTO> damageTypeDTOs = new();
                 ResultsDTO results_damageTypes = await GetDTOAtUrl<ResultsDTO>(damageTypesUrl);
-                await AddDTOToList(results_damageTypes.Results, damageTypeDTOs);
+
+                await BulkLoadDTOToList(results_damageTypes.Results, damageTypeDTOs);
 
                 SchemaRoot_DamageTypeDTO exportDTO = SchemaMapper.MapToSchemaDTOs_DamageTypes(damageTypeDTOs);
                 ExportData(exportDTO, "DamageTypes.txt");
@@ -234,15 +285,14 @@ namespace DndParser
 	    // --------------------------------
         #region Equipment
 
-        private static async Task TryParseEquipment(string equipmentUrl)
+        private static async Task TryParseEquipment(string equipmentUrl) // Execution Time: ~7.43s
         {
             try
             {
                 List<EquipmentDTO> equipmentDTOs = new();
                 ResultsDTO results_equipment = await GetDTOAtUrl<ResultsDTO>(equipmentUrl);
-                await AddDTOToList(results_equipment.Results, equipmentDTOs);
+                await BulkLoadDTOToList(results_equipment.Results, equipmentDTOs);
 
-                // TODO: May need to wrap these in Try/Catch, since not every Equipment Item has every property
                 await AddEquipmentDTODetails(equipmentDTOs);
                 
                 SchemaRoot_EquipmentDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Equipment(equipmentDTOs);
@@ -256,48 +306,65 @@ namespace DndParser
 
         private static async Task AddEquipmentDTODetails(List<EquipmentDTO> equipmentDTOs)
         {
+            List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
             foreach(EquipmentDTO equipmentDTO in equipmentDTOs)
             {
-                // Console.WriteLine($"Parser.cs: Parsing Equipment Item: {equipmentDTO.Name}");
-
-                // Loading in Equipment Categories
-                equipmentDTO.EquipmentCategoryDetail = await GetDTOAtUrl<DescriptionDTO>(equipmentDTO.EquipmentCategory.Url);
-
-                // Try Loading in Gear Categories
-                try
+                // Equipment Category
+                string focusUrl = equipmentDTO.EquipmentCategory?.Url;
+                if(!string.IsNullOrEmpty(focusUrl))
                 {
-                    equipmentDTO.GearCategoryDetail = await GetDTOAtUrl<DescriptionDTO>(equipmentDTO.GearCategory.Url);
-                }
-                catch(Exception x)
-                {
-                    Console.WriteLine($"Parser.cs: No Gear Category DTOs to load");
+                    dtosToLoad.Add((
+                        result => equipmentDTO.EquipmentCategoryDetail = (DescriptionDTO)result, 
+                        typeof(DescriptionDTO), 
+                        focusUrl
+                        ));
                 }
 
-                // Try Loading in Equipment_DamageDTOs for Damage
-                try
+                // Gear Category
+                focusUrl = equipmentDTO.GearCategory?.Url;
+                if(!string.IsNullOrEmpty(focusUrl))
                 {
-                    equipmentDTO.Damage.DamageTypeDetail = await GetDTOAtUrl<DescriptionsDTO>(equipmentDTO.Damage.DamageType.Url);
+                    dtosToLoad.Add((
+                        result => equipmentDTO.GearCategoryDetail = (DescriptionDTO)result, 
+                        typeof(DescriptionDTO), 
+                        focusUrl
+                        ));
                 }
-                catch(Exception x)
+
+                // Damage
+                focusUrl = equipmentDTO.Damage.DamageType?.Url;
+                if(!string.IsNullOrEmpty(focusUrl))
                 {
-                    Console.WriteLine($"Parser.cs: No Damage DTOs to load");
+                    dtosToLoad.Add((
+                        result => equipmentDTO.Damage.DamageTypeDetail = (DescriptionsDTO)result,
+                        typeof(DescriptionsDTO),
+                        focusUrl
+                        ));
                 }
-                
-                // Try Loading in Equipment_DamageDTOs for Two-Handed Damage
-                try
+
+                // Two Handed Damage
+                focusUrl = equipmentDTO.TwoHandedDamage.DamageType?.Url;
+                if(!string.IsNullOrEmpty(focusUrl))
                 {
-                    equipmentDTO.TwoHandedDamage.DamageTypeDetail = await GetDTOAtUrl<DescriptionsDTO>(equipmentDTO.TwoHandedDamage.DamageType.Url);
+                    dtosToLoad.Add((
+                        result => equipmentDTO.TwoHandedDamage.DamageTypeDetail = (DescriptionsDTO)result,
+                        typeof(DescriptionsDTO),
+                        focusUrl
+                        ));
                 }
-                catch(Exception x)
+                // Properties
+                for(int index = 0; index < equipmentDTO.Properties.Count; index++)
                 {
-                    Console.WriteLine($"Parser.cs: No Two Handed Damage DTOs to load");
+                    focusUrl = equipmentDTO.Properties[index].Url;
+                    dtosToLoad.Add((
+                        result => equipmentDTO.PropertiesDetail.Add((DescriptionsDTO)result),
+                        typeof(DescriptionsDTO),
+                        focusUrl
+                    ));
                 }
-                
-                // Loading in Properties
-                List<DescriptionsDTO> propertiesDTO = new();
-                await AddDTOToList(equipmentDTO.Properties, propertiesDTO);
-                equipmentDTO.PropertiesDetail = propertiesDTO;
+
             }
+            await BulkLoadDTOToTuple(dtosToLoad);
         }
 
         #endregion
@@ -349,14 +416,15 @@ namespace DndParser
 	    // --------------------------------
         #region Languages
 
-        private static async Task TryParseLanguages(string languageUrl)
+        private static async Task TryParseLanguages(string languageUrl) // Execution Time: ~.40s
         {
             try
             {
                 List<LanguageDTO> languageDTOs = new();
 
                 ResultsDTO results_languages = await GetDTOAtUrl<ResultsDTO>(languageUrl);
-                await AddDTOToList(results_languages.Results, languageDTOs);
+
+                await BulkLoadDTOToList(results_languages.Results, languageDTOs);
 
                 SchemaRoot_LanguageDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Languages(languageDTOs);
                 ExportData(exportDTO, "Languages.txt");
@@ -395,14 +463,16 @@ namespace DndParser
 	    // --------------------------------
         #region Magic Schools
 
-        private static async Task TryParseMagicSchools(string magicSchoolsUrl)
+        private static async Task TryParseMagicSchools(string magicSchoolsUrl) // Execution Time: ~.42s
         {
             try
             {
                 List<DescriptionDTO> magicSchoolDTOs = new();
 
                 ResultsDTO results_magicSchools = await GetDTOAtUrl<ResultsDTO>(magicSchoolsUrl);
-                await AddDTOToList(results_magicSchools.Results, magicSchoolDTOs);
+
+                await BulkLoadDTOToList(results_magicSchools.Results, magicSchoolDTOs);
+                
                 SchemaRoot_MagicSchoolDTO exportDTO = SchemaMapper.MapToSchemaDTOs_MagicSchools(magicSchoolDTOs);
                 ExportData(exportDTO, "MagicSchools.txt");
             }
@@ -483,13 +553,15 @@ namespace DndParser
 	    // --------------------------------
         #region Rule Sections
 
-        private static async Task TryParseRuleSections(string ruleSectionsUrl)
+        private static async Task TryParseRuleSections(string ruleSectionsUrl) // Execution Time: ~.48s
         {
             try
             {
                 List<DescriptionDTO> ruleSectionDTOs = new();
                 ResultsDTO results_ruleSections = await GetDTOAtUrl<ResultsDTO>(ruleSectionsUrl);
-                await AddDTOToList(results_ruleSections.Results, ruleSectionDTOs);
+
+                await BulkLoadDTOToList(results_ruleSections.Results, ruleSectionDTOs);
+                
                 SchemaRoot_RuleSectionDTO exportDTO = SchemaMapper.MapToSchemaDTOs_RuleSections(ruleSectionDTOs);
                 ExportData(exportDTO, "RuleSections.txt");
             }
@@ -527,14 +599,14 @@ namespace DndParser
 	    // --------------------------------
         #region Skills
 
-        private static async Task TryParseSkills(string skillsUrl)
+        private static async Task TryParseSkills(string skillsUrl) // Execution Time: ~.81s
         {
             try
             {
                 List<SkillDTO> skillDTOs = new();
 
                 ResultsDTO results_skills = await GetDTOAtUrl<ResultsDTO>(skillsUrl);
-                await AddDTOToList(results_skills.Results, skillDTOs);
+                await BulkLoadDTOToList(results_skills.Results, skillDTOs);
                 await AddSkillAbilityScore(skillDTOs);
 
                 SchemaRoot_SkillDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Skills(skillDTOs);
@@ -548,11 +620,20 @@ namespace DndParser
 
         private static async Task AddSkillAbilityScore(List<SkillDTO> skillDTOs)
         {
+            List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
             foreach(SkillDTO skillDTO in skillDTOs)
             {
-                DescriptionsDTO? descriptionDTO = await GetDTOAtUrl<DescriptionsDTO>(skillDTO.AbilityScore.Url);
-                skillDTO.AbilityScoreDetailed = descriptionDTO;
+                string focusUrl = skillDTO.AbilityScore?.Url;
+                if(!string.IsNullOrEmpty(focusUrl))
+                {
+                    dtosToLoad.Add((
+                        result => skillDTO.AbilityScoreDetailed = (DescriptionsDTO)result, 
+                        typeof(DescriptionsDTO), 
+                        focusUrl
+                        ));
+                }
             }
+            await BulkLoadDTOToTuple(dtosToLoad);
         }
 
         #endregion
@@ -646,13 +727,13 @@ namespace DndParser
 	    // --------------------------------
         #region Weapon Properties
 
-        private static async Task TryParseWeaponProperties(string weaponPropertiesUrl)
+        private static async Task TryParseWeaponProperties(string weaponPropertiesUrl) // Execution Time: ~.41s
         {
             try
             {
                 List<DescriptionsDTO> weaponPropertiesDTO = new();
                 ResultsDTO results_weaponProperties = await GetDTOAtUrl<ResultsDTO>(weaponPropertiesUrl);
-                await AddDTOToList(results_weaponProperties.Results, weaponPropertiesDTO);
+                await BulkLoadDTOToList(results_weaponProperties.Results, weaponPropertiesDTO);
                 SchemaRoot_WeaponPropertyDTO exportDTO = SchemaMapper.MapToSchemaDTOs_WeaponProperties(weaponPropertiesDTO);
                 ExportData(exportDTO, "WeaponProperties.txt");
             }
@@ -682,17 +763,37 @@ namespace DndParser
             return JsonSerializer.Deserialize<T>(response);
         }
 
-        /// <summary>
-        /// Loads in DTO details at url in UrlDTO, serializes and adds them to list of specified type
-        /// </summary>
-        /// <param name="urlsToLoad"></param>
-        /// <param name="dtoList"></param>
-        private static async Task AddDTOToList<T>(List<UrlDTO> urlsToLoad, List<T> dtoList)
+        private static async Task BulkLoadDTOToList<T>(List<UrlDTO> urlDTOs, List<T> dtoList)
         {
-            foreach(UrlDTO urlDTO in urlsToLoad)
+            List<string> urlsToLoad = new();
+            foreach(UrlDTO urlDTO in urlDTOs)
             {
-                T? newDTO = await GetDTOAtUrl<T>(urlDTO.Url);
-                dtoList.Add(newDTO);
+                urlsToLoad.Add(urlDTO.Url);
+            }
+            string[] results = await WebClient.GetDataAtURLBulk(dndBaseUrl, urlsToLoad);
+            
+            foreach(string result in results)
+            {
+                dtoList.Add(JsonSerializer.Deserialize<T>(result));
+            }
+        }
+
+        private static async Task BulkLoadDTOToTuple(List<(Action<IDataTransferObject> assignResult, Type dtoType, string url)> tupleList)
+        {
+            List<string> urlsToLoad = new();
+
+            foreach((Action<IDataTransferObject> assignmentResult, Type dtoType, string url) in tupleList)  // Separates the URLs for bulk loading
+            {
+                urlsToLoad.Add(url);
+            }
+            string[] results = await WebClient.GetDataAtURLBulk(dndBaseUrl, urlsToLoad);                    // Bulk loads URLs
+
+            for(int index = 0; index < results.Length; index++) // Loops through results, deserializes using given type, assigns result using callback action
+            {
+                (Action<IDataTransferObject> assignResult, Type dtoType, string url) currentTuple = tupleList[index];
+                
+                IDataTransferObject deserializedResult = (IDataTransferObject)JsonSerializer.Deserialize(results[index], currentTuple.dtoType);        
+                currentTuple.assignResult(deserializedResult);
             }
         }
 
@@ -708,20 +809,6 @@ namespace DndParser
 
             Console.WriteLine("\nFinal Payload:");
             Console.WriteLine(jsonOutput);
-        }
-
-        #endregion
-
-        // --------------------------------
-        //	    DEBUG TOOLS
-	    // --------------------------------
-
-        #region DebugTools
-
-        // Sole purpose for this is to help me debug
-        private static void PrintDTOData(string response)
-        {
-            Console.WriteLine($"Printing DTO Data: {response}");
         }
 
         #endregion

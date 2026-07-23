@@ -9,14 +9,14 @@ namespace DndParser
     // TODO: May also need to look into keeping as hash of loaded URLs to 
     // prevent future double loading and increase application speed
 
-    public class SchemaDescriptionDTO
+    public class SchemaDescriptionDTO : IDataTransferObject
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
-    public class SchemaFullNameDescriptionDTO
+    public class SchemaFullNameDescriptionDTO : IDataTransferObject
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("full_name")] public string FullName { get; set; } = string.Empty;
@@ -24,13 +24,13 @@ namespace DndParser
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
-    public class SchemaAmountDTO
+    public class SchemaAmountDTO : IDataTransferObject
     {
         [JsonPropertyName("quantity")] public float Quantity { get; set; } = 0.0f;
         [JsonPropertyName("unit")] public string Unit { get; set; } = string.Empty;
     }
 
-    public class SchemaDistanceDTO
+    public class SchemaDistanceDTO : IDataTransferObject
     {
         [JsonPropertyName("normal")] public int Normal { get; set; } = 0;
         [JsonPropertyName("long")] public int Long { get; set; } = 0;
@@ -40,12 +40,12 @@ namespace DndParser
     //	    ABILITY-SCORE DTOs
     // --------------------------------
     #region Ability-Score DTOs
-    public class SchemaRoot_AbilityScoreDTO
+    public class SchemaRoot_AbilityScoreDTO : IDataTransferObject
     {
         [JsonPropertyName("ability-scores")] public List<SchemaAbilityScoreDTO> AbilityScores { get; set; } = new();
     }
 
-    public class SchemaAbilityScoreDTO
+    public class SchemaAbilityScoreDTO : IDataTransferObject
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("full_name")] public string FullName { get; set; } = string.Empty;
@@ -61,12 +61,12 @@ namespace DndParser
     // --------------------------------
     #region Alignment DTOs
 
-    public class SchemaRoot_AlignmentDTO
+    public class SchemaRoot_AlignmentDTO : IDataTransferObject
     {
         [JsonPropertyName("alignments")] public List<SchemaAlignmentDTO> Alignments { get; set; } = new();
     }
 
-    public class SchemaAlignmentDTO
+    public class SchemaAlignmentDTO : IDataTransferObject
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("abbreviation")] public string Abbreviation { get; set; } = string.Empty;
@@ -81,7 +81,7 @@ namespace DndParser
     // --------------------------------
     #region Condition DTOs
 
-    public class SchemaRoot_ConditionsDTO
+    public class SchemaRoot_ConditionsDTO : IDataTransferObject
     {
         [JsonPropertyName("conditions")] public List<SchemaDescriptionDTO> Conditions { get; set; } = new();
     }
@@ -93,7 +93,7 @@ namespace DndParser
     // --------------------------------
     #region Damage Type DTOs
 
-    public class SchemaRoot_DamageTypeDTO
+    public class SchemaRoot_DamageTypeDTO : IDataTransferObject
     {
         [JsonPropertyName("damage-types")] public List<SchemaDescriptionDTO> DamageTypes { get; set; } = new();
     }
@@ -105,12 +105,12 @@ namespace DndParser
     // --------------------------------
     #region Equipment DTOs
 
-    public class SchemaRoot_EquipmentDTO
+    public class SchemaRoot_EquipmentDTO : IDataTransferObject
     {
         [JsonPropertyName("equipment")] public List<SchemaEquipmentDTO> Equipment { get; set; } = new();
     }
 
-    public class SchemaEquipmentDTO
+    public class SchemaEquipmentDTO : IDataTransferObject
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("image")] public string Image { get; set; } = string.Empty;
@@ -140,20 +140,20 @@ namespace DndParser
         [JsonPropertyName("properties")] public List<SchemaDescriptionDTO> Properties { get; set; } = new();
     }
 
-    public class SchemaEquipment_ArmorClassDTO
+    public class SchemaEquipment_ArmorClassDTO : IDataTransferObject
     {
         [JsonPropertyName("base")] public int Base { get; set; } = 0;
         [JsonPropertyName("dex_bonus")] public bool DexBonus { get; set; } = false;
         [JsonPropertyName("max_bonus")] public int MaxBonus { get; set; } = 0;
     }
 
-    public class SchemaEquipment_DamageDTO
+    public class SchemaEquipment_DamageDTO : IDataTransferObject
     {
         [JsonPropertyName("damage_dice")] public string DamageDice { get; set; } = string.Empty;
         [JsonPropertyName("damage_type")] public SchemaDescriptionDTO DamageType { get; set; } = new();
     }
 
-    public class SchemaEquipment_ContentDTO
+    public class SchemaEquipment_ContentDTO : IDataTransferObject
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("quantity")] public int Quantity { get; set; } = 0;
@@ -167,12 +167,12 @@ namespace DndParser
 
     #region Language Type DTOs
 
-    public class SchemaRoot_LanguageDTO
+    public class SchemaRoot_LanguageDTO : IDataTransferObject
     {
         [JsonPropertyName("languages")] public List<SchemaLanguageDTO> Languages { get; set; } = new();
     }
 
-    public class SchemaLanguageDTO
+    public class SchemaLanguageDTO : IDataTransferObject
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("type")] public string Type { get; set; } = string.Empty;
@@ -188,7 +188,7 @@ namespace DndParser
     // --------------------------------
     #region Magic School DTOs
 
-    public class SchemaRoot_MagicSchoolDTO
+    public class SchemaRoot_MagicSchoolDTO : IDataTransferObject
     {
         [JsonPropertyName("magic-schools")] public List<SchemaDescriptionDTO> MagicSchools { get; set; } = new();
     }
@@ -200,7 +200,7 @@ namespace DndParser
     // --------------------------------
     #region Rule Section DTOs
 
-    public class SchemaRoot_RuleSectionDTO
+    public class SchemaRoot_RuleSectionDTO : IDataTransferObject
     {
         [JsonPropertyName("rule-sections")] public List<SchemaDescriptionDTO> RuleSections { get; set; } = new();
     }
@@ -212,12 +212,12 @@ namespace DndParser
     // --------------------------------
     #region Skill DTOs
 
-    public class SchemaRoot_SkillDTO
+    public class SchemaRoot_SkillDTO : IDataTransferObject
     {
         [JsonPropertyName("skills")] public List<SchemaSkillDTO> Skills { get; set; } = new();
     }
 
-    public class SchemaSkillDTO
+    public class SchemaSkillDTO : IDataTransferObject
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
@@ -232,7 +232,7 @@ namespace DndParser
     // --------------------------------   
     #region Weapon Property DTOs
 
-    public class SchemaRoot_WeaponPropertyDTO
+    public class SchemaRoot_WeaponPropertyDTO : IDataTransferObject
     {
         [JsonPropertyName("weapon-properties")] public List<SchemaDescriptionDTO> WeaponProperties { get; set; } = new();
     }

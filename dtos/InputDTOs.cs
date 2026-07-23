@@ -7,19 +7,19 @@ namespace DndParser
     // --------------------------------
     #region Universal DTOs
 
-    public class ResultsDTO
+    public class ResultsDTO : IDataTransferObject
     {
         [JsonPropertyName("results")] public List<UrlDTO> Results { get; set; } = new();
     }
 
-    public class UrlDTO
+    public class UrlDTO : IDataTransferObject
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name {get; set; } = string.Empty;
         [JsonPropertyName("url")] public string Url { get; set; } = string.Empty;
     }
 
-    public class DescriptionDTO
+    public class DescriptionDTO : IDataTransferObject
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
@@ -27,7 +27,7 @@ namespace DndParser
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
-    public class DescriptionsDTO
+    public class DescriptionsDTO : IDataTransferObject
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
@@ -36,13 +36,13 @@ namespace DndParser
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
-    public class AmountDTO
+    public class AmountDTO : IDataTransferObject
     {
         [JsonPropertyName("quantity")] public float Quantity { get; set; } = 0.0f;
         [JsonPropertyName("unit")] public string Unit { get; set; } = string.Empty;
     }
 
-    public class DistanceDTO
+    public class DistanceDTO : IDataTransferObject
     {
         [JsonPropertyName("normal")] public int Normal { get; set; } = 0;
         [JsonPropertyName("long")] public int Long { get; set; } = 0;
@@ -55,7 +55,7 @@ namespace DndParser
     // --------------------------------
     #region Version-Specific DTOs
 
-    public class CategoryDTO
+    public class CategoryDTO : IDataTransferObject
     {
         [JsonPropertyName("ability-scores")] public string AbilityScores { get; set; } = string.Empty;
         [JsonPropertyName("alignments")] public string Alignments { get; set; } = string.Empty;
@@ -92,7 +92,7 @@ namespace DndParser
     // --------------------------------
     #region Category-Specific DTOs
 
-    public class AbilityScoreDTO
+    public class AbilityScoreDTO : IDataTransferObject
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
@@ -104,7 +104,7 @@ namespace DndParser
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
-    public class AlignmentDTO
+    public class AlignmentDTO : IDataTransferObject
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
@@ -113,7 +113,7 @@ namespace DndParser
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
-    public class ClassDTO
+    public class ClassDTO : IDataTransferObject
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
@@ -129,7 +129,7 @@ namespace DndParser
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
-    public class EquipmentDTO
+    public class EquipmentDTO : IDataTransferObject
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
@@ -163,27 +163,27 @@ namespace DndParser
         [JsonPropertyName("propertiesDetail")] public List<DescriptionsDTO> PropertiesDetail { get; set; } = new();
     }
 
-    public class Equipment_ArmorClassDTO
+    public class Equipment_ArmorClassDTO : IDataTransferObject
     {
         [JsonPropertyName("base")] public int Base { get; set; } = 0;
         [JsonPropertyName("dex_bonus")] public bool DexBonus { get; set; } = false;
         [JsonPropertyName("max_bonus")] public int MaxBonus { get; set; } = 0;
     }
 
-    public class Equipment_DamageDTO
+    public class Equipment_DamageDTO : IDataTransferObject
     {
         [JsonPropertyName("damage_dice")] public string DamageDice { get; set; } = string.Empty;
         [JsonPropertyName("damage_type")] public UrlDTO DamageType { get; set; } = new();
         [JsonPropertyName("damage_typeDetail")] public DescriptionsDTO DamageTypeDetail { get; set; } = new();
     }
 
-    public class Equipment_ContentDTO
+    public class Equipment_ContentDTO : IDataTransferObject
     {
         [JsonPropertyName("item")] public UrlDTO Item { get; set; } = new();
         [JsonPropertyName("quantity")] public int Quantity { get; set; } = 0;
     }
 
-    public class LanguageDTO
+    public class LanguageDTO : IDataTransferObject
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
@@ -193,7 +193,7 @@ namespace DndParser
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
 
-    public class SkillDTO
+    public class SkillDTO : IDataTransferObject
     {
         [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
