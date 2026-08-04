@@ -7,6 +7,11 @@ namespace DndParser
     // --------------------------------
     #region Universal DTOs
 
+    public class NameDTO : IDataTransferObject
+    {
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+    }
+
     public class ResultsDTO : IDataTransferObject
     {
         [JsonPropertyName("results")] public List<UrlDTO> Results { get; set; } = new();
@@ -224,6 +229,26 @@ namespace DndParser
         [JsonPropertyName("script")] public string Script { get; set; } = string.Empty;
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
     }
+    #endregion
+
+    // Magic Items
+    #region 
+
+    public class MagicItemDTO : IDataTransferObject
+    {
+        [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+        [JsonPropertyName("image")] public string Image { get; set; } = string.Empty;
+        [JsonPropertyName("variant")] public bool Variant { get; set; } = false;
+        [JsonPropertyName("rarity")] public NameDTO Rarity { get; set; } = new();
+        [JsonPropertyName("equipment_category")] public UrlDTO equipmentCategory { get; set; } = new();
+        [JsonPropertyName("equipment_categoryDetail")] public DescriptionDTO EquipmentCategoryDetail { get; set; } = new();
+        [JsonPropertyName("desc")] public string[] Desc { get; set; }
+        [JsonPropertyName("variants")] public List<UrlDTO> Variants { get; set; } = new();
+        [JsonPropertyName("variantsDetail")] public List<DescriptionsDTO> VariantsDetailed { get; set; } = new();
+    }
+
     #endregion
 
     // Skills

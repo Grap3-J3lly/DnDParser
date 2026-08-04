@@ -262,6 +262,33 @@ namespace DndParser
             return exportDTO;
         }
 
+        internal static SchemaRoot_MagicItemDTO MapToSchemaDTOs_MagicItems(List<MagicItemDTO> magicItems)
+        {
+            SchemaRoot_MagicItemDTO exportDTO = new();
+
+            foreach(MagicItemDTO magicItemDTO in magicItems)
+            {
+                SchemaMagicItemDTO newMagicItemDTO = new();
+                newMagicItemDTO.Name = magicItemDTO.Name;
+                newMagicItemDTO.UpdatedAt = magicItemDTO.UpdatedAt;
+                newMagicItemDTO.Variant = magicItemDTO.Variant;
+                newMagicItemDTO.Image = magicItemDTO.Image;
+
+                newMagicItemDTO.Description = string.Join(" ", magicItemDTO.Desc);
+
+                newMagicItemDTO.Rarity.Name = magicItemDTO.Rarity.Name;
+
+                newMagicItemDTO.EquipmentCategory.Name = magicItemDTO.EquipmentCategoryDetail.Name;
+                newMagicItemDTO.EquipmentCategory.UpdatedAt = magicItemDTO.EquipmentCategoryDetail.UpdatedAt;
+
+                MapToDescriptionsSchema(magicItemDTO.VariantsDetailed, newMagicItemDTO.Variants);
+
+                exportDTO.MagicItems.Add(newMagicItemDTO);
+            }
+
+            return exportDTO;
+        }
+
         internal static SchemaRoot_MagicSchoolDTO MapToSchemaDTOs_MagicSchools(List<DescriptionDTO> magicSchools)
         {
             SchemaRoot_MagicSchoolDTO exportDTO = new();

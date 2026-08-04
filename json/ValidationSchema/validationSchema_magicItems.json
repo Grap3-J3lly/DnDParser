@@ -1,0 +1,146 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties":
+    {
+        "magic-items":
+        {
+            "type": "array",
+            "items":
+            [
+                {
+                    "type": "object",
+                    "properties":
+                    {
+                        "name":
+                        {
+                            "type": "string",
+                            "description": "The 'name' attribute of the magic item"
+                        },
+                        "description":
+                        {
+                            "type": "string",
+                            "description": "The 'description' attribute of the magic item, concatenated with a space delimiter"
+                        },
+                        "updated_at":
+                        {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The 'updated_at' attribute of the magic item"
+                        },
+                        "image":
+                        {
+                            "type" :"string",
+                            "description": "The 'image' attribute of the magic item"
+                        },
+                        "variant":
+                        {
+                            "type":"boolean",
+                            "description": "The 'variant' attribute of the magic item"
+                        },
+                        "rarity":
+                        {
+                            "type":"object",
+                            "properties": 
+                            {
+                                "name":
+                                {
+                                    "type":"string",
+                                    "description": "The 'name' attribute of the rarity"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "name"
+                            ]
+                        },
+                        "equipment_category":
+                        {
+                            "type": "object",
+                            "properties":
+                            {
+                                "name":
+                                {
+                                    "type": "string",
+                                    "description": "The 'name' attribute of the equipment category"
+                                },
+                                "description":
+                                {
+                                    "type": "string",
+                                    "description": "The 'description' attribute of the equipment category, concatenated with a space delimiter"
+                                },
+                                "updated_at":
+                                {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "The 'updated_at' attribute of the equipment category"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required":
+                            [
+                                "name",
+                                "description",
+                                "updated_at"
+                            ]
+                        },
+                        "variants":
+                        {
+                            "type":"array",
+                            "items": 
+                            [
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "name":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'name' attribute of the magic item"
+                                        },
+                                        "description":
+                                        {
+                                            "type": "string",
+                                            "description": "The 'description' attribute of the magic item, concatenated with a space delimiter"
+                                        },
+                                        "updated_at":
+                                        {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "description": "The 'updated_at' attribute of the magic item"
+                                        }
+                                    },
+                                    "additionalProperties": false,
+                                    "required":
+                                    [
+                                        "name",
+                                        "description",
+                                        "updated_at"
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required":
+                    [
+                        "name",
+                        "description",
+                        "updated_at",
+                        "image",
+                        "variant",
+                        "rarity",
+                        "equipment_category",
+                        "variants"
+                    ]
+                }
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "required":
+    [
+        "magic-items"
+    ]
+}

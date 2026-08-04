@@ -33,7 +33,6 @@ namespace DndParser
             // - Spells (0)
 
             // TODO: Immediate Queue:
-            // - Magic Items
             // - Rules
             // - Races
             // - Subraces
@@ -67,9 +66,7 @@ namespace DndParser
             // await TryParseFeatures(categoryDTO.Features);
 
             // await TryParseLanguages(categoryDTO.Languages);                                              // ---DONE--- //
-
-            await TryParseMagicItems(categoryDTO.MagicItems);
-
+            // await TryParseMagicItems(categoryDTO.MagicItems);                                            // ---DONE--- //
             // await TryParseMagicSchools(categoryDTO.MagicSchools);                                        // ---DONE--- //
 
             // await TryParseMonsters(categoryDTO.Monsters);
@@ -78,7 +75,7 @@ namespace DndParser
             
             // await TryParseRuleSections(categoryDTO.RuleSections);                                        // ---DONE--- //
             
-            // await TryParseRules(categoryDTO.Rules);
+            await TryParseRules(categoryDTO.Rules);
             
             // await TryParseSkills(categoryDTO.Skills);                                                    // ---DONE--- //
             
@@ -357,7 +354,7 @@ namespace DndParser
 	    // --------------------------------
         #region Equipment Categories
 
-        private static async Task TryParseEquipmentCategories(string equipmentCategoryUrl)
+        private static async Task TryParseEquipmentCategories(string equipmentCategoryUrl) // ~20s
         {
             try
             {
@@ -456,18 +453,51 @@ namespace DndParser
 	    // --------------------------------
         #region Magic Items
 
-        private static async Task TryParseMagicItems(string magicItemsUrl)
+        private static async Task TryParseMagicItems(string magicItemsUrl) // ~9.6s
         {
             try
             {
+                List<MagicItemDTO> magicItemDTOs = new();
                 ResultsDTO results_magicItems = await GetDTOAtUrl<ResultsDTO>(magicItemsUrl);
-                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_magicItems.Results[0].Url);
-                Console.WriteLine($"Magic Items Details: {response}");
+                await BulkLoadDTOToList(results_magicItems.Results, magicItemDTOs);
+                await LoadMagicItemDetails(magicItemDTOs);
+
+                SchemaRoot_MagicItemDTO exportDTO = SchemaMapper.MapToSchemaDTOs_MagicItems(magicItemDTOs);
+                ExportData(exportDTO, "MagicItems");
             }
             catch(Exception exception)
             {
                 Console.WriteLine($"Caught unexpected exception: {exception}");
             }
+        }
+
+        private static async Task LoadMagicItemDetails(List<MagicItemDTO> magicItemDTOs)
+        {
+            List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
+            foreach(MagicItemDTO magicItemDTO in magicItemDTOs)
+            {
+                // Equipment Category
+                string focusUrl = magicItemDTO.equipmentCategory?.Url;
+                if(!string.IsNullOrEmpty(focusUrl))
+                {
+                    dtosToLoad.Add((
+                        result => magicItemDTO.EquipmentCategoryDetail = (DescriptionDTO)result, 
+                        typeof(DescriptionDTO), 
+                        focusUrl
+                        ));
+                }
+                // Variants
+                for(int index = 0; index < magicItemDTO.Variants.Count; index++)
+                {
+                    focusUrl = magicItemDTO.Variants[index].Url;
+                    dtosToLoad.Add((
+                        result => magicItemDTO.VariantsDetailed.Add((DescriptionsDTO)result),
+                        typeof(DescriptionsDTO),
+                        focusUrl
+                    ));
+                }
+            }
+            await BulkLoadDTOToTuple(dtosToLoad);
         }
 
         #endregion
@@ -823,6 +853,15 @@ namespace DndParser
 
             Console.WriteLine("\nFinal Payload:");
             Console.WriteLine(jsonOutput);
+
+            // using (StreamWriter writer = new StreamWriter(filePath + "temp" + ".txt", append: true))
+            // {
+            //     foreach(UrlDTO urlDTO in results_magicItems.Results)
+            //     {
+            //         string response = await WebClient.GetDataAtURL(dndBaseUrl, urlDTO.Url);
+            //         writer.WriteLine(response);
+            //     }
+            // }
         }
 
         #endregion

@@ -9,6 +9,11 @@ namespace DndParser
     // TODO: May also need to look into keeping as hash of loaded URLs to 
     // prevent future double loading and increase application speed
 
+    public class SchemaNameDTO : IDataTransferObject
+    {
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+    }
+
     public class SchemaDescriptionDTO : IDataTransferObject
     {
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
@@ -199,6 +204,31 @@ namespace DndParser
         [JsonPropertyName("typical_speakers")] public string TypicalSpeakers { get; set; } = string.Empty;
         [JsonPropertyName("script")] public string Script { get; set; } = string.Empty;
         [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+    }
+
+    #endregion
+
+    // --------------------------------
+    //	    MAGIC ITEM DTOs
+    // --------------------------------
+
+    #region Magic Item DTOs
+
+    public class SchemaRoot_MagicItemDTO : IDataTransferObject
+    {
+        [JsonPropertyName("magic-items")] public List<SchemaMagicItemDTO> MagicItems { get; set; } = new();
+    }
+
+    public class SchemaMagicItemDTO : IDataTransferObject
+    {
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+        [JsonPropertyName("image")] public string Image { get; set; } = string.Empty;
+        [JsonPropertyName("variant")] public bool Variant { get; set; } = false;
+        [JsonPropertyName("rarity")] public SchemaNameDTO Rarity { get; set; } = new();
+        [JsonPropertyName("equipment_category")] public SchemaDescriptionDTO EquipmentCategory { get; set; } = new();
+        [JsonPropertyName("variants")] public List<SchemaDescriptionDTO> Variants { get; set; } = new();
     }
 
     #endregion
