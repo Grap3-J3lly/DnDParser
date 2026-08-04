@@ -303,6 +303,26 @@ namespace DndParser
             return exportDTO;
         }
 
+        internal static SchemaRoot_RuleDTO MapToSchemaDTOs_Rules(List<RuleDTO> rules)
+        {
+            SchemaRoot_RuleDTO exportDTO = new();
+
+            foreach(RuleDTO ruleDTO in rules)
+            {
+                SchemaRuleDTO newRuleDTO = new();
+
+                newRuleDTO.Name = ruleDTO.Name;
+                newRuleDTO.Description = ruleDTO.Desc;
+                newRuleDTO.UpdatedAt = ruleDTO.UpdatedAt;
+
+                MapToDescriptionSchema(ruleDTO.SubsectionsDetail, newRuleDTO.Subsections);
+
+                exportDTO.Rules.Add(newRuleDTO);
+            }
+
+            return exportDTO;
+        }
+
         internal static SchemaRoot_SkillDTO MapToSchemaDTOs_Skills(List<SkillDTO> skills)
         {
             SchemaRoot_SkillDTO exportDTO = new();

@@ -251,6 +251,21 @@ namespace DndParser
 
     #endregion
 
+    // Rules
+    #region
+
+    public class RuleDTO : IDataTransferObject
+    {
+        [JsonPropertyName("index")] public string Index { get; set; } = string.Empty;
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("desc")] public string Desc { get; set; } = string.Empty;
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+        [JsonPropertyName("subsections")] public List<UrlDTO> Subsections { get; set; } = new();
+        [JsonPropertyName("subsectionsDetail")] public List<DescriptionDTO> SubsectionsDetail { get; set; } = new();
+    }
+
+    #endregion
+
     // Skills
     #region
 

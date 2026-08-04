@@ -33,7 +33,6 @@ namespace DndParser
             // - Spells (0)
 
             // TODO: Immediate Queue:
-            // - Rules
             // - Races
             // - Subraces
             // - Traits
@@ -71,12 +70,10 @@ namespace DndParser
 
             // await TryParseMonsters(categoryDTO.Monsters);
             // await TryParseProficiencies(categoryDTO.Proficiencies);
-            // await TryParseRaces(categoryDTO.Races);
+            await TryParseRaces(categoryDTO.Races);
             
             // await TryParseRuleSections(categoryDTO.RuleSections);                                        // ---DONE--- //
-            
-            await TryParseRules(categoryDTO.Rules);
-            
+            // await TryParseRules(categoryDTO.Rules);                                                      // ---DONE--- //
             // await TryParseSkills(categoryDTO.Skills);                                                    // ---DONE--- //
             
             // await TryParseSpells(categoryDTO.Spells);
@@ -581,8 +578,14 @@ namespace DndParser
             try
             {
                 ResultsDTO results_races = await GetDTOAtUrl<ResultsDTO>(racesUrl);
-                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_races.Results[0].Url);
-                Console.WriteLine($"Races Details: {response}");
+                // using (StreamWriter writer = new StreamWriter(filePath + "temp" + ".txt", append: true))
+                // {
+                //     foreach(UrlDTO urlDTO in results_races.Results)
+                //     {
+                //         string response = await WebClient.GetDataAtURL(dndBaseUrl, urlDTO.Url);
+                //         writer.WriteLine(response);
+                //     }
+                // }
             }
             catch(Exception exception)
             {
@@ -622,18 +625,41 @@ namespace DndParser
 	    // --------------------------------
         #region Rules
 
-        private static async Task TryParseRules(string rulesUrl)
+        private static async Task TryParseRules(string rulesUrl) // .7s
         {
             try
             {
+                List<RuleDTO> ruleDTOs = new();
                 ResultsDTO results_rules = await GetDTOAtUrl<ResultsDTO>(rulesUrl);
-                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_rules.Results[0].Url);
-                Console.WriteLine($"Rules Details: {response}");
+                await BulkLoadDTOToList(results_rules.Results, ruleDTOs);
+                await AddRuleSubsections(ruleDTOs);
+
+                SchemaRoot_RuleDTO exportDTO = SchemaMapper.MapToSchemaDTOs_Rules(ruleDTOs);
+                ExportData(exportDTO, "Rules");
             }
             catch(Exception exception)
             {
                 Console.WriteLine($"Caught unexpected exception: {exception}");
             }
+        }
+
+        private static async Task AddRuleSubsections(List<RuleDTO> ruleDTOs)
+        {
+            List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
+            string focusUrl = "";
+            foreach(RuleDTO ruleDTO in ruleDTOs)
+            {
+                for(int index = 0; index < ruleDTO.Subsections.Count; index++)
+                {
+                    focusUrl = ruleDTO.Subsections[index].Url;
+                    dtosToLoad.Add((
+                        result => ruleDTO.SubsectionsDetail.Add((DescriptionDTO)result),
+                        typeof(DescriptionDTO),
+                        focusUrl
+                    ));
+                }
+            }
+            await BulkLoadDTOToTuple(dtosToLoad);
         }
 
         #endregion
