@@ -162,6 +162,26 @@ namespace DndParser
     #endregion
 
     // --------------------------------
+    //  EQUIPMENT CATEGORY DTOs
+    // --------------------------------
+
+    #region Equipment Category DTOs
+
+    public class SchemaRoot_EquipmentCategoryDTO : IDataTransferObject
+    {
+        [JsonPropertyName("equipment-categories")] public List<SchemaEquipmentCategoryDTO> EquipmentCategories { get; set; } = new();
+    }
+
+    public class SchemaEquipmentCategoryDTO : IDataTransferObject
+    {
+        [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("updated_at")] public string UpdatedAt { get; set; } = string.Empty;
+        [JsonPropertyName("equipment")] public List<SchemaEquipmentDTO> Equipment { get; set; } = new();
+    }
+
+    #endregion
+
+    // --------------------------------
     //	    LANGUAGE DTOs
     // --------------------------------
 

@@ -118,6 +118,13 @@ namespace DndParser
         internal static SchemaRoot_EquipmentDTO MapToSchemaDTOs_Equipment(List<EquipmentDTO> equipment)
         {
             SchemaRoot_EquipmentDTO exportDTO = new();
+            exportDTO.Equipment = EquipmentMapping(equipment);
+            return exportDTO;
+        }
+
+        internal static List<SchemaEquipmentDTO> EquipmentMapping(List<EquipmentDTO> equipment, bool mapCategoryObjects = true)
+        {
+            List<SchemaEquipmentDTO> schemaEquipmentDTOs = new();
 
             foreach(EquipmentDTO equipmentDTO in equipment)
             {
@@ -140,6 +147,8 @@ namespace DndParser
 
                 // Array to String Concatenation Assignment
                 newEquipment.Description = string.Join(" ", equipmentDTO.Desc);
+
+                if(equipmentDTO.Special != null)
                 newEquipment.Special = string.Join(" ", equipmentDTO.Special);
                 
                 // Armor Class Assignment
@@ -163,13 +172,16 @@ namespace DndParser
                 newEquipment.ThrowRange.Normal = equipmentDTO.ThrowRange.Normal;
                 newEquipment.ThrowRange.Long = equipmentDTO.ThrowRange.Long;
 
-                // Equipment Category Assignment
-                newEquipment.EquipmentCategory.Name = equipmentDTO.EquipmentCategoryDetail.Name;
-                newEquipment.EquipmentCategory.UpdatedAt = equipmentDTO.EquipmentCategoryDetail.UpdatedAt;
+                if(mapCategoryObjects)
+                {
+                    // Equipment Category Assignment
+                    newEquipment.EquipmentCategory.Name = equipmentDTO.EquipmentCategoryDetail.Name;
+                    newEquipment.EquipmentCategory.UpdatedAt = equipmentDTO.EquipmentCategoryDetail.UpdatedAt;
 
-                // Gear Category Assignment
-                newEquipment.GearCategory.Name = equipmentDTO.GearCategoryDetail.Name;
-                newEquipment.GearCategory.UpdatedAt = equipmentDTO.GearCategoryDetail.UpdatedAt;
+                    // Gear Category Assignment
+                    newEquipment.GearCategory.Name = equipmentDTO.GearCategoryDetail.Name;
+                    newEquipment.GearCategory.UpdatedAt = equipmentDTO.GearCategoryDetail.UpdatedAt;
+                }
 
                 // Damage Assignment
                 string damageUpdatedAt = equipmentDTO.Damage.DamageTypeDetail.UpdatedAt;
@@ -208,7 +220,24 @@ namespace DndParser
 
                 // Properties Assignment
                 MapToDescriptionsSchema(equipmentDTO.PropertiesDetail, newEquipment.Properties);
-                exportDTO.Equipment.Add(newEquipment);
+                schemaEquipmentDTOs.Add(newEquipment);
+            }
+
+            return schemaEquipmentDTOs;
+        }
+
+        internal static SchemaRoot_EquipmentCategoryDTO MapToSchemaDTOs_EquipmentCategories(List<EquipmentCategoryDTO> equipmentCategories)
+        {
+            SchemaRoot_EquipmentCategoryDTO exportDTO = new();
+
+            foreach(EquipmentCategoryDTO equipmentCategoryDTO in equipmentCategories)
+            {
+                SchemaEquipmentCategoryDTO newEquipmentCategory = new();
+                newEquipmentCategory.Name = equipmentCategoryDTO.Name;
+                newEquipmentCategory.UpdatedAt = equipmentCategoryDTO.UpdatedAt;
+
+                newEquipmentCategory.Equipment = EquipmentMapping(equipmentCategoryDTO.EquipmentDetails, mapCategoryObjects: false);
+                exportDTO.EquipmentCategories.Add(newEquipmentCategory);
             }
 
             return exportDTO;
