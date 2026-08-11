@@ -3,42 +3,6 @@ namespace DndParser
     public class SchemaMapper
     {
         // --------------------------------
-        //	    GENERIC SCHEMA MAPPING
-	    // --------------------------------
-
-        #region Generic Schema Mapping
-
-        /// This variation is for DTOs with single line descriptions
-        internal static void MapToDescriptionSchema(List<DescriptionDTO> generalDTOs, List<SchemaDescriptionDTO> schemaDTOs)
-        {
-            foreach(DescriptionDTO generalDTO in generalDTOs)
-            {
-                SchemaDescriptionDTO newCondition = new();
-                newCondition.Name = generalDTO.Name;
-                newCondition.UpdatedAt = generalDTO.UpdatedAt;
-
-                newCondition.Description = generalDTO.Desc;
-                schemaDTOs.Add(newCondition);
-            }
-        }
-
-        /// This variation is for DTOs with multi-line descriptions
-        internal static void MapToDescriptionsSchema(List<DescriptionsDTO> generalDTOs, List<SchemaDescriptionDTO> schemaDTOs)
-        {
-            foreach(DescriptionsDTO generalDTO in generalDTOs)
-            {
-                SchemaDescriptionDTO newCondition = new();
-                newCondition.Name = generalDTO.Name;
-                newCondition.UpdatedAt = generalDTO.UpdatedAt;
-
-                newCondition.Description = string.Join(" ", generalDTO.Desc);
-                schemaDTOs.Add(newCondition);
-            }
-        }
-
-        #endregion
-
-        // --------------------------------
         //  SCHEMA MAPPING BY CATEGORY
 	    // --------------------------------
         #region Schema Mapping By Category
@@ -48,14 +12,14 @@ namespace DndParser
         /// </summary>
         /// <param name="scores"></param>
         /// <param name="skills"></param>
-        internal static SchemaRoot_AbilityScoreDTO MapToSchemaDTOs_AbilityScores(List<AbilityScoreDTO> scores)
+        internal static SchemaRoot_AbilityScoreDTO MapToSchemaDTOs_AbilityScores(List<InputAbilityScoreDTO> scores)
         {
             SchemaRoot_AbilityScoreDTO exportDTO = new();
 
-            foreach(AbilityScoreDTO abScoreDTO in scores)
+            foreach(InputAbilityScoreDTO abScoreDTO in scores)
             {
                 // Creating the new ability object
-                SchemaAbilityScoreDTO newAbility = new();
+                OutputAbilityScoreDTO newAbility = new();
                 
                 // Basic 1-1 Mappings
                 newAbility.Name = abScoreDTO.Name;
@@ -67,28 +31,19 @@ namespace DndParser
 
                 // Creating and adding proper skill objects
                 newAbility.Skills = new();
-                foreach(DescriptionsDTO skillDetail in abScoreDTO.SkillsDetailed)
-                {                    
-                    SchemaDescriptionDTO newSkill = new();
-                    newSkill.Name = skillDetail.Name;
-                    newSkill.UpdatedAt = skillDetail.UpdatedAt;
-
-                    // Same Custom Rule for Description: Concatenating array together with space delimiter
-                    newSkill.Description = string.Join(" ", skillDetail.Desc);
-                    newAbility.Skills.Add(newSkill);
-                }
+                MapDescToDescription(abScoreDTO.SkillsDetailed, newAbility.Skills);
                 exportDTO.AbilityScores.Add(newAbility);
             }
             return exportDTO;
         }
         
-        internal static SchemaRoot_AlignmentDTO MapToSchemaDTOs_Alignments(List<AlignmentDTO> alignments)
+        internal static SchemaRoot_AlignmentDTO MapToSchemaDTOs_Alignments(List<InputAlignmentDTO> alignments)
         {
             SchemaRoot_AlignmentDTO exportDTO = new();
 
-            foreach(AlignmentDTO alignmentDTO in alignments)
+            foreach(InputAlignmentDTO alignmentDTO in alignments)
             {
-                SchemaAlignmentDTO newAlignment = new();
+                OutputAlignmentDTO newAlignment = new();
                 
                 newAlignment.Name = alignmentDTO.Name;
                 newAlignment.Abbreviation = alignmentDTO.Abbreviation;
@@ -104,31 +59,179 @@ namespace DndParser
         internal static SchemaRoot_ConditionsDTO MapToSchemaDTOs_Conditions(List<DescriptionsDTO> conditions)
         {
             SchemaRoot_ConditionsDTO exportDTO = new();
-            MapToDescriptionsSchema(conditions, exportDTO.Conditions);
+            MapDescToDescription(conditions, exportDTO.Conditions);
             return exportDTO;
         }
 
         internal static SchemaRoot_DamageTypeDTO MapToSchemaDTOs_DamageTypes(List<DescriptionsDTO> damageTypes)
         {
             SchemaRoot_DamageTypeDTO exportDTO = new();
-            MapToDescriptionsSchema(damageTypes, exportDTO.DamageTypes);
+            MapDescToDescription(damageTypes, exportDTO.DamageTypes);
             return exportDTO;
         }
 
-        internal static SchemaRoot_EquipmentDTO MapToSchemaDTOs_Equipment(List<EquipmentDTO> equipment)
+        internal static SchemaRoot_EquipmentDTO MapToSchemaDTOs_Equipment(List<InputEquipmentDTO> equipment)
         {
             SchemaRoot_EquipmentDTO exportDTO = new();
             exportDTO.Equipment = EquipmentMapping(equipment);
             return exportDTO;
         }
 
-        internal static List<SchemaEquipmentDTO> EquipmentMapping(List<EquipmentDTO> equipment, bool mapCategoryObjects = true)
+        internal static SchemaRoot_EquipmentCategoryDTO MapToSchemaDTOs_EquipmentCategories(List<InputEquipmentCategoryDTO> equipmentCategories)
         {
-            List<SchemaEquipmentDTO> schemaEquipmentDTOs = new();
+            SchemaRoot_EquipmentCategoryDTO exportDTO = new();
 
-            foreach(EquipmentDTO equipmentDTO in equipment)
+            foreach(InputEquipmentCategoryDTO equipmentCategoryDTO in equipmentCategories)
             {
-                SchemaEquipmentDTO newEquipment = new();
+                OutputEquipmentCategoryDTO newEquipmentCategory = new();
+                newEquipmentCategory.Name = equipmentCategoryDTO.Name;
+                newEquipmentCategory.UpdatedAt = equipmentCategoryDTO.UpdatedAt;
+
+                newEquipmentCategory.Equipment = EquipmentMapping(equipmentCategoryDTO.EquipmentDetails, mapCategoryObjects: false);
+                exportDTO.EquipmentCategories.Add(newEquipmentCategory);
+            }
+
+            return exportDTO;
+        }
+
+        internal static SchemaRoot_LanguageDTO MapToSchemaDTOs_Languages(List<InputLanguageDTO> languages)
+        {
+            SchemaRoot_LanguageDTO exportDTO = new();
+
+            foreach(InputLanguageDTO languageDTO in languages)
+            {
+                OutputLanguageDTO newLanguage = new();
+                newLanguage.Name = languageDTO.Name;
+                newLanguage.Type = languageDTO.Type;
+                newLanguage.Script = languageDTO.Script;
+                newLanguage.UpdatedAt = languageDTO.UpdatedAt;
+
+                newLanguage.TypicalSpeakers = string.Join(", ", languageDTO.TypicalSpeakers);
+                exportDTO.Languages.Add(newLanguage);
+            }
+
+            return exportDTO;
+        }
+
+        internal static SchemaRoot_MagicItemDTO MapToSchemaDTOs_MagicItems(List<InputMagicItemDTO> magicItems)
+        {
+            SchemaRoot_MagicItemDTO exportDTO = new();
+
+            foreach(InputMagicItemDTO magicItemDTO in magicItems)
+            {
+                OutputMagicItemDTO newMagicItemDTO = new();
+                newMagicItemDTO.Name = magicItemDTO.Name;
+                newMagicItemDTO.UpdatedAt = magicItemDTO.UpdatedAt;
+                newMagicItemDTO.Variant = magicItemDTO.Variant;
+                newMagicItemDTO.Image = magicItemDTO.Image;
+
+                newMagicItemDTO.Description = string.Join(" ", magicItemDTO.Desc);
+
+                newMagicItemDTO.Rarity.Name = magicItemDTO.Rarity.Name;
+
+                newMagicItemDTO.EquipmentCategory.Name = magicItemDTO.EquipmentCategoryDetail.Name;
+                newMagicItemDTO.EquipmentCategory.UpdatedAt = magicItemDTO.EquipmentCategoryDetail.UpdatedAt;
+
+                MapDescToDescription(magicItemDTO.VariantsDetailed, newMagicItemDTO.Variants);
+
+                exportDTO.MagicItems.Add(newMagicItemDTO);
+            }
+
+            return exportDTO;
+        }
+
+        internal static SchemaRoot_MagicSchoolDTO MapToSchemaDTOs_MagicSchools(List<DescriptionDTO> magicSchools)
+        {
+            SchemaRoot_MagicSchoolDTO exportDTO = new();
+            exportDTO.MagicSchools = magicSchools;
+            return exportDTO;
+        }
+
+        internal static SchemaRoot_RuleSectionDTO MapToSchemaDTOs_RuleSections(List<DescriptionDTO> ruleSections)
+        {
+            SchemaRoot_RuleSectionDTO exportDTO = new();
+            exportDTO.RuleSections = ruleSections;
+            return exportDTO;
+        }
+
+        internal static SchemaRoot_RuleDTO MapToSchemaDTOs_Rules(List<InputRuleDTO> rules)
+        {
+            SchemaRoot_RuleDTO exportDTO = new();
+
+            foreach(InputRuleDTO ruleDTO in rules)
+            {
+                OutputRuleDTO newRuleDTO = new();
+
+                newRuleDTO.Name = ruleDTO.Name;
+                newRuleDTO.Description = ruleDTO.Desc;
+                newRuleDTO.UpdatedAt = ruleDTO.UpdatedAt;
+                newRuleDTO.Subsections = ruleDTO.SubsectionsDetail;
+
+                exportDTO.Rules.Add(newRuleDTO);
+            }
+
+            return exportDTO;
+        }
+
+        internal static SchemaRoot_SkillDTO MapToSchemaDTOs_Skills(List<InputSkillDTO> skills)
+        {
+            SchemaRoot_SkillDTO exportDTO = new();
+
+            foreach(InputSkillDTO skillDTO in skills)
+            {
+                OuputSkillDTO newSkill = new();
+                newSkill.Name = skillDTO.Name;
+                newSkill.UpdatedAt = skillDTO.UpdatedAt;
+
+                newSkill.Description = string.Join(" ", skillDTO.Desc);
+
+                newSkill.AbilityScore.Name = skillDTO.AbilityScoreDetailed.Name;
+                newSkill.AbilityScore.FullName = skillDTO.AbilityScoreDetailed.FullName;
+                newSkill.AbilityScore.UpdatedAt = skillDTO.AbilityScoreDetailed.UpdatedAt;
+                newSkill.AbilityScore.Description = string.Join(" ", skillDTO.AbilityScoreDetailed.Desc);
+
+                exportDTO.Skills.Add(newSkill);
+            }
+
+            return exportDTO;
+        }
+
+        internal static SchemaRoot_WeaponPropertyDTO MapToSchemaDTOs_WeaponProperties(List<DescriptionsDTO> weaponProperties)
+        {
+            SchemaRoot_WeaponPropertyDTO exportDTO = new();
+            MapDescToDescription(weaponProperties, exportDTO.WeaponProperties);
+            return exportDTO;            
+        }
+
+        #endregion
+
+        // --------------------------------
+        //  HELPER MAPPING FUNCTIONS
+        // --------------------------------
+
+        #region Helper Mapping Functions
+
+        /// This variation is for DTOs with multi-line descriptions
+        internal static void MapDescToDescription(List<DescriptionsDTO> generalDTOs, List<DescriptionDTO> schemaDTOs)
+        {
+            foreach(DescriptionsDTO generalDTO in generalDTOs)
+            {
+                DescriptionDTO newCondition = new();
+                newCondition.Name = generalDTO.Name;
+                newCondition.UpdatedAt = generalDTO.UpdatedAt;
+
+                newCondition.Description = string.Join(" ", generalDTO.Desc);
+                schemaDTOs.Add(newCondition);
+            }
+        }
+
+        internal static List<OutputEquipmentDTO> EquipmentMapping(List<InputEquipmentDTO> equipment, bool mapCategoryObjects = true)
+        {
+            List<OutputEquipmentDTO> schemaEquipmentDTOs = new();
+
+            foreach(InputEquipmentDTO equipmentDTO in equipment)
+            {
+                OutputEquipmentDTO newEquipment = new();
 
                 // 1-to-1 assignments
                 newEquipment.Name = equipmentDTO.Name;
@@ -210,150 +313,23 @@ namespace DndParser
                 }
 
                 // Content Assignment
-                foreach(Equipment_ContentDTO contentDTO in equipmentDTO.Contents)
+                foreach(InputContentDTO contentDTO in equipmentDTO.Contents)
                 {
-                    SchemaEquipment_ContentDTO newContentDTO = new();
+                    OutputContentDTO newContentDTO = new();
                     newContentDTO.Name = contentDTO.Item.Name;
                     newContentDTO.Quantity = contentDTO.Quantity;
                     newEquipment.Content.Add(newContentDTO);
                 }
 
                 // Properties Assignment
-                MapToDescriptionsSchema(equipmentDTO.PropertiesDetail, newEquipment.Properties);
+                MapDescToDescription(equipmentDTO.PropertiesDetail, newEquipment.Properties);
                 schemaEquipmentDTOs.Add(newEquipment);
             }
 
             return schemaEquipmentDTOs;
         }
 
-        internal static SchemaRoot_EquipmentCategoryDTO MapToSchemaDTOs_EquipmentCategories(List<EquipmentCategoryDTO> equipmentCategories)
-        {
-            SchemaRoot_EquipmentCategoryDTO exportDTO = new();
-
-            foreach(EquipmentCategoryDTO equipmentCategoryDTO in equipmentCategories)
-            {
-                SchemaEquipmentCategoryDTO newEquipmentCategory = new();
-                newEquipmentCategory.Name = equipmentCategoryDTO.Name;
-                newEquipmentCategory.UpdatedAt = equipmentCategoryDTO.UpdatedAt;
-
-                newEquipmentCategory.Equipment = EquipmentMapping(equipmentCategoryDTO.EquipmentDetails, mapCategoryObjects: false);
-                exportDTO.EquipmentCategories.Add(newEquipmentCategory);
-            }
-
-            return exportDTO;
-        }
-
-        internal static SchemaRoot_LanguageDTO MapToSchemaDTOs_Languages(List<LanguageDTO> languages)
-        {
-            SchemaRoot_LanguageDTO exportDTO = new();
-
-            foreach(LanguageDTO languageDTO in languages)
-            {
-                SchemaLanguageDTO newLanguage = new();
-                newLanguage.Name = languageDTO.Name;
-                newLanguage.Type = languageDTO.Type;
-                newLanguage.Script = languageDTO.Script;
-                newLanguage.UpdatedAt = languageDTO.UpdatedAt;
-
-                newLanguage.TypicalSpeakers = string.Join(", ", languageDTO.TypicalSpeakers);
-                exportDTO.Languages.Add(newLanguage);
-            }
-
-            return exportDTO;
-        }
-
-        internal static SchemaRoot_MagicItemDTO MapToSchemaDTOs_MagicItems(List<MagicItemDTO> magicItems)
-        {
-            SchemaRoot_MagicItemDTO exportDTO = new();
-
-            foreach(MagicItemDTO magicItemDTO in magicItems)
-            {
-                SchemaMagicItemDTO newMagicItemDTO = new();
-                newMagicItemDTO.Name = magicItemDTO.Name;
-                newMagicItemDTO.UpdatedAt = magicItemDTO.UpdatedAt;
-                newMagicItemDTO.Variant = magicItemDTO.Variant;
-                newMagicItemDTO.Image = magicItemDTO.Image;
-
-                newMagicItemDTO.Description = string.Join(" ", magicItemDTO.Desc);
-
-                newMagicItemDTO.Rarity.Name = magicItemDTO.Rarity.Name;
-
-                newMagicItemDTO.EquipmentCategory.Name = magicItemDTO.EquipmentCategoryDetail.Name;
-                newMagicItemDTO.EquipmentCategory.UpdatedAt = magicItemDTO.EquipmentCategoryDetail.UpdatedAt;
-
-                MapToDescriptionsSchema(magicItemDTO.VariantsDetailed, newMagicItemDTO.Variants);
-
-                exportDTO.MagicItems.Add(newMagicItemDTO);
-            }
-
-            return exportDTO;
-        }
-
-        internal static SchemaRoot_MagicSchoolDTO MapToSchemaDTOs_MagicSchools(List<DescriptionDTO> magicSchools)
-        {
-            SchemaRoot_MagicSchoolDTO exportDTO = new();
-            MapToDescriptionSchema(magicSchools, exportDTO.MagicSchools);
-            return exportDTO;
-        }
-
-        internal static SchemaRoot_RuleSectionDTO MapToSchemaDTOs_RuleSections(List<DescriptionDTO> ruleSections)
-        {
-            SchemaRoot_RuleSectionDTO exportDTO = new();
-            MapToDescriptionSchema(ruleSections, exportDTO.RuleSections);
-            return exportDTO;
-        }
-
-        internal static SchemaRoot_RuleDTO MapToSchemaDTOs_Rules(List<RuleDTO> rules)
-        {
-            SchemaRoot_RuleDTO exportDTO = new();
-
-            foreach(RuleDTO ruleDTO in rules)
-            {
-                SchemaRuleDTO newRuleDTO = new();
-
-                newRuleDTO.Name = ruleDTO.Name;
-                newRuleDTO.Description = ruleDTO.Desc;
-                newRuleDTO.UpdatedAt = ruleDTO.UpdatedAt;
-
-                MapToDescriptionSchema(ruleDTO.SubsectionsDetail, newRuleDTO.Subsections);
-
-                exportDTO.Rules.Add(newRuleDTO);
-            }
-
-            return exportDTO;
-        }
-
-        internal static SchemaRoot_SkillDTO MapToSchemaDTOs_Skills(List<SkillDTO> skills)
-        {
-            SchemaRoot_SkillDTO exportDTO = new();
-
-            foreach(SkillDTO skillDTO in skills)
-            {
-                SchemaSkillDTO newSkill = new();
-                newSkill.Name = skillDTO.Name;
-                newSkill.UpdatedAt = skillDTO.UpdatedAt;
-
-                newSkill.Description = string.Join(" ", skillDTO.Desc);
-
-                newSkill.AbilityScore.Name = skillDTO.AbilityScoreDetailed.Name;
-                newSkill.AbilityScore.FullName = skillDTO.AbilityScoreDetailed.FullName;
-                newSkill.AbilityScore.UpdatedAt = skillDTO.AbilityScoreDetailed.UpdatedAt;
-                newSkill.AbilityScore.Description = string.Join(" ", skillDTO.AbilityScoreDetailed.Desc);
-
-                exportDTO.Skills.Add(newSkill);
-            }
-
-            return exportDTO;
-        }
-
-        internal static SchemaRoot_WeaponPropertyDTO MapToSchemaDTOs_WeaponProperties(List<DescriptionsDTO> weaponProperties)
-        {
-            SchemaRoot_WeaponPropertyDTO exportDTO = new();
-            MapToDescriptionsSchema(weaponProperties, exportDTO.WeaponProperties);
-            return exportDTO;            
-        }
-
         #endregion
-        
+
     }
 }

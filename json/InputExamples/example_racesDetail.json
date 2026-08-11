@@ -1,32 +1,23 @@
 {
-    "index": "dragonborn",
-    "name": "Dragonborn",
-    "speed": 30,
+    "index": "halfling",
+    "name": "Halfling",
+    "speed": 25,
     "ability_bonuses":
     [
         {
             "ability_score":
             {
-                "index": "str",
-                "name": "STR",
-                "url": "/api/2014/ability-scores/str"
+                "index": "dex",
+                "name": "DEX",
+                "url": "/api/2014/ability-scores/dex"
             },
             "bonus": 2
-        },
-        {
-            "ability_score":
-            {
-                "index": "cha",
-                "name": "CHA",
-                "url": "/api/2014/ability-scores/cha"
-            },
-            "bonus": 1
         }
     ],
-    "alignment": "Dragonborn tend to extremes, making a conscious choice for one side or the other in the cosmic war between good and evil. Most dragonborn are good, but those who side with evil can be terrible villains.",
-    "age": "Young dragonborn grow quickly. They walk hours after hatching, attain the size and development of a 10-year-old human child by the age of 3, and reach adulthood by 15. They live to be around 80.",
-    "size": "Medium",
-    "size_description": "Dragonborn are taller and heavier than humans, standing well over 6 feet tall and averaging almost 250 pounds. Your size is Medium.",
+    "age": "A halfling reaches adulthood at the age of 20 and generally lives into the middle of his or her second century.",
+    "alignment": "Most halflings are lawful good. As a rule, they are good-hearted and kind, hate to see others in pain, and have no tolerance for oppression. They are also very orderly and traditional, leaning heavily on the support of their community and the comfort of their old ways.",
+    "size": "Small",
+    "size_description": "Halflings average about 3 feet tall and weigh about 40 pounds. Your size is Small.",
     "languages":
     [
         {
@@ -35,32 +26,38 @@
             "url": "/api/2014/languages/common"
         },
         {
-            "index": "draconic",
-            "name": "Draconic",
-            "url": "/api/2014/languages/draconic"
+            "index": "halfling",
+            "name": "Halfling",
+            "url": "/api/2014/languages/halfling"
         }
     ],
-    "language_desc": "You can speak, read, and write Common and Draconic. Draconic is thought to be one of the oldest languages and is often used in the study of magic. The language sounds harsh to most other creatures and includes numerous hard consonants and sibilants.",
+    "language_desc": "You can speak, read, and write Common and Halfling. The Halfling language isn't secret, but halflings are loath to share it with others. They write very little, so they don't have a rich body of literature. Their oral tradition, however, is very strong. Almost all halflings speak Common to converse with the people in whose lands they dwell or through which they are traveling.",
     "traits":
     [
         {
-            "index": "draconic-ancestry",
-            "name": "Draconic Ancestry",
-            "url": "/api/2014/traits/draconic-ancestry"
+            "index": "brave",
+            "name": "Brave",
+            "url": "/api/2014/traits/brave"
         },
         {
-            "index": "breath-weapon",
-            "name": "Breath Weapon",
-            "url": "/api/2014/traits/breath-weapon"
+            "index": "halfling-nimbleness",
+            "name": "Halfling Nimbleness",
+            "url": "/api/2014/traits/halfling-nimbleness"
         },
         {
-            "index": "damage-resistance",
-            "name": "Damage Resistance",
-            "url": "/api/2014/traits/damage-resistance"
+            "index": "lucky",
+            "name": "Lucky",
+            "url": "/api/2014/traits/lucky"
         }
     ],
     "subraces":
-    [],
-    "url": "/api/2014/races/dragonborn",
+    [
+        {
+            "index": "lightfoot-halfling",
+            "name": "Lightfoot Halfling",
+            "url": "/api/2014/subraces/lightfoot-halfling"
+        }
+    ],
+    "url": "/api/2014/races/halfling",
     "updated_at": "2026-04-01T20:35:38.675Z"
 }

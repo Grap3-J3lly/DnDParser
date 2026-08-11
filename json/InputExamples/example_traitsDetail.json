@@ -1,22 +1,43 @@
 {
-    "index": "artificers-lore",
+    "index": "dwarven-combat-training",
     "races":
-    [],
-    "subraces":
     [
         {
-            "index": "rock-gnome",
-            "name": "Rock Gnome",
-            "url": "/api/2014/subraces/rock-gnome"
+            "index": "dwarf",
+            "name": "Dwarf",
+            "url": "/api/2014/races/dwarf"
         }
     ],
-    "name": "Artificer's Lore",
+    "subraces":
+    [],
+    "name": "Dwarven Combat Training",
     "desc":
     [
-        "Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply."
+        "You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."
     ],
     "proficiencies":
-    [],
-    "url": "/api/2014/traits/artificers-lore",
+    [
+        {
+            "index": "battleaxes",
+            "name": "Battleaxes",
+            "url": "/api/2014/proficiencies/battleaxes"
+        },
+        {
+            "index": "handaxes",
+            "name": "Handaxes",
+            "url": "/api/2014/proficiencies/handaxes"
+        },
+        {
+            "index": "light-hammers",
+            "name": "Light hammers",
+            "url": "/api/2014/proficiencies/light-hammers"
+        },
+        {
+            "index": "warhammers",
+            "name": "Warhammers",
+            "url": "/api/2014/proficiencies/warhammers"
+        }
+    ],
+    "url": "/api/2014/traits/dwarven-combat-training",
     "updated_at": "2026-04-01T20:35:39.695Z"
 }

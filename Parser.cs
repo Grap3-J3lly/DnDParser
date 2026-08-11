@@ -39,11 +39,11 @@ namespace DndParser
             // - Classes
             // - Subclasses
             // - Features
+            // - Proficiencies
             // - Spells
-            // - Proficiencies End#2
-            // - Monsters End#1
+            // - Monsters End
 
-            CategoryDTO categoryDTO = await GetDTOAtUrl<CategoryDTO>(apiYear2014);
+            Category2014DTO categoryDTO = await GetDTOAtUrl<Category2014DTO>(apiYear2014);
 
             long startTime = Stopwatch.GetTimestamp();
 
@@ -91,7 +91,7 @@ namespace DndParser
         }
 
         // This might be rate locked
-        public static async Task TryParseAll(CategoryDTO categoryDTO)
+        public static async Task TryParseAll(Category2014DTO categoryDTO)
         {
             List<Task> tasks = new List<Task> {
                 TryParseAbilityScores(categoryDTO.AbilityScores)
@@ -114,7 +114,7 @@ namespace DndParser
             try
             {
                 // Import DTOs for later mapping
-                List<AbilityScoreDTO> abilityScoreDTOs = new();
+                List<InputAbilityScoreDTO> abilityScoreDTOs = new();
 
                 // Get initial list of scores
                 ResultsDTO results_abilityScores = await GetDTOAtUrl<ResultsDTO>(abilityScoresUrl);
@@ -137,10 +137,10 @@ namespace DndParser
             }
         }
 
-        private static async Task AddAbilityScoreSkills(List<AbilityScoreDTO> abilityScoreDTOs)
+        private static async Task AddAbilityScoreSkills(List<InputAbilityScoreDTO> abilityScoreDTOs)
         {
             List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
-            foreach(AbilityScoreDTO scoreDTO in abilityScoreDTOs)
+            foreach(InputAbilityScoreDTO scoreDTO in abilityScoreDTOs)
                 {
                     // await AddDTOToList(scoreDTO.Skills, scoreDTO.SkillsDetailed);
 
@@ -169,7 +169,7 @@ namespace DndParser
         {
             try
             {
-                List<AlignmentDTO> alignmentDTOs = new();
+                List<InputAlignmentDTO> alignmentDTOs = new();
                 ResultsDTO results_alignments = await GetDTOAtUrl<ResultsDTO>(alignmentsUrl);
 
                 await BulkLoadDTOToList(results_alignments.Results, alignmentDTOs);
@@ -266,7 +266,7 @@ namespace DndParser
         {
             try
             {
-                List<EquipmentDTO> equipmentDTOs = new();
+                List<InputEquipmentDTO> equipmentDTOs = new();
                 ResultsDTO results_equipment = await GetDTOAtUrl<ResultsDTO>(equipmentUrl);
                 await BulkLoadDTOToList(results_equipment.Results, equipmentDTOs);
 
@@ -281,10 +281,10 @@ namespace DndParser
             }
         }
 
-        private static async Task AddEquipmentDTODetails(List<EquipmentDTO> equipmentDTOs, bool includeCategories = true)
+        private static async Task AddEquipmentDTODetails(List<InputEquipmentDTO> equipmentDTOs, bool includeCategories = true)
         {
             List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
-            foreach(EquipmentDTO equipmentDTO in equipmentDTOs)
+            foreach(InputEquipmentDTO equipmentDTO in equipmentDTOs)
             {
                 // Equipment Category
                 string focusUrl = equipmentDTO.EquipmentCategory?.Url;
@@ -355,7 +355,7 @@ namespace DndParser
         {
             try
             {
-                List<EquipmentCategoryDTO> equipmentCategoryDTOs = new();
+                List<InputEquipmentCategoryDTO> equipmentCategoryDTOs = new();
                 ResultsDTO results_equipmentCategories = await GetDTOAtUrl<ResultsDTO>(equipmentCategoryUrl);
                 await BulkLoadDTOToList(results_equipmentCategories.Results, equipmentCategoryDTOs);
                 await LoadEquipCategoryEquipmentDetails(equipmentCategoryDTOs);
@@ -369,19 +369,19 @@ namespace DndParser
             }
         }
 
-        private static async Task LoadEquipCategoryEquipmentDetails(List<EquipmentCategoryDTO> equipmentCategoryDTOs)
+        private static async Task LoadEquipCategoryEquipmentDetails(List<InputEquipmentCategoryDTO> equipmentCategoryDTOs)
         {
             List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
             string focusUrl = "";
-            foreach(EquipmentCategoryDTO equipmentCategoryDTO in equipmentCategoryDTOs)
+            foreach(InputEquipmentCategoryDTO equipmentCategoryDTO in equipmentCategoryDTOs)
             {
                 for(int index = 0; index < equipmentCategoryDTO.Equipment.Count; index++)
                 {
                     focusUrl = equipmentCategoryDTO.Equipment[index].Url;
                     // Console.WriteLine($"Focus: {equipmentCategoryDTO.Equipment[index].Name}");
                     dtosToLoad.Add((
-                        result => equipmentCategoryDTO.EquipmentDetails.Add((EquipmentDTO)result),
-                        typeof(EquipmentDTO),
+                        result => equipmentCategoryDTO.EquipmentDetails.Add((InputEquipmentDTO)result),
+                        typeof(InputEquipmentDTO),
                         focusUrl
                     ));
                 }
@@ -389,7 +389,7 @@ namespace DndParser
             await BulkLoadDTOToTuple(dtosToLoad);
 
             List<Task> equipmentDetailTasks = new();
-            foreach(EquipmentCategoryDTO equipmentCategory in equipmentCategoryDTOs)
+            foreach(InputEquipmentCategoryDTO equipmentCategory in equipmentCategoryDTOs)
             {
                 equipmentDetailTasks.Add(AddEquipmentDTODetails(equipmentCategory.EquipmentDetails, false));
             }
@@ -428,7 +428,7 @@ namespace DndParser
         {
             try
             {
-                List<LanguageDTO> languageDTOs = new();
+                List<InputLanguageDTO> languageDTOs = new();
 
                 ResultsDTO results_languages = await GetDTOAtUrl<ResultsDTO>(languageUrl);
 
@@ -454,7 +454,7 @@ namespace DndParser
         {
             try
             {
-                List<MagicItemDTO> magicItemDTOs = new();
+                List<InputMagicItemDTO> magicItemDTOs = new();
                 ResultsDTO results_magicItems = await GetDTOAtUrl<ResultsDTO>(magicItemsUrl);
                 await BulkLoadDTOToList(results_magicItems.Results, magicItemDTOs);
                 await LoadMagicItemDetails(magicItemDTOs);
@@ -468,10 +468,10 @@ namespace DndParser
             }
         }
 
-        private static async Task LoadMagicItemDetails(List<MagicItemDTO> magicItemDTOs)
+        private static async Task LoadMagicItemDetails(List<InputMagicItemDTO> magicItemDTOs)
         {
             List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
-            foreach(MagicItemDTO magicItemDTO in magicItemDTOs)
+            foreach(InputMagicItemDTO magicItemDTO in magicItemDTOs)
             {
                 // Equipment Category
                 string focusUrl = magicItemDTO.equipmentCategory?.Url;
@@ -557,8 +557,14 @@ namespace DndParser
             {
                 ResultsDTO results_proficiencies = await GetDTOAtUrl<ResultsDTO>(proficienciesUrl);
 
-                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_proficiencies.Results[0].Url);
-                Console.WriteLine($"Proficiencies Detailed: {response}");
+                using (StreamWriter writer = new StreamWriter(filePath + "temp3" + ".txt", append: true))
+                {
+                    foreach(UrlDTO urlDTO in results_proficiencies.Results)
+                    {
+                        string response = await WebClient.GetDataAtURL(dndBaseUrl, urlDTO.Url);
+                        writer.WriteLine(response);
+                    }
+                }
             }
             catch(Exception exception)
             {
@@ -578,14 +584,7 @@ namespace DndParser
             try
             {
                 ResultsDTO results_races = await GetDTOAtUrl<ResultsDTO>(racesUrl);
-                // using (StreamWriter writer = new StreamWriter(filePath + "temp" + ".txt", append: true))
-                // {
-                //     foreach(UrlDTO urlDTO in results_races.Results)
-                //     {
-                //         string response = await WebClient.GetDataAtURL(dndBaseUrl, urlDTO.Url);
-                //         writer.WriteLine(response);
-                //     }
-                // }
+                
             }
             catch(Exception exception)
             {
@@ -629,7 +628,7 @@ namespace DndParser
         {
             try
             {
-                List<RuleDTO> ruleDTOs = new();
+                List<InputRuleDTO> ruleDTOs = new();
                 ResultsDTO results_rules = await GetDTOAtUrl<ResultsDTO>(rulesUrl);
                 await BulkLoadDTOToList(results_rules.Results, ruleDTOs);
                 await AddRuleSubsections(ruleDTOs);
@@ -643,11 +642,11 @@ namespace DndParser
             }
         }
 
-        private static async Task AddRuleSubsections(List<RuleDTO> ruleDTOs)
+        private static async Task AddRuleSubsections(List<InputRuleDTO> ruleDTOs)
         {
             List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
             string focusUrl = "";
-            foreach(RuleDTO ruleDTO in ruleDTOs)
+            foreach(InputRuleDTO ruleDTO in ruleDTOs)
             {
                 for(int index = 0; index < ruleDTO.Subsections.Count; index++)
                 {
@@ -673,7 +672,7 @@ namespace DndParser
         {
             try
             {
-                List<SkillDTO> skillDTOs = new();
+                List<InputSkillDTO> skillDTOs = new();
 
                 ResultsDTO results_skills = await GetDTOAtUrl<ResultsDTO>(skillsUrl);
                 await BulkLoadDTOToList(results_skills.Results, skillDTOs);
@@ -688,17 +687,17 @@ namespace DndParser
             }
         }
 
-        private static async Task AddSkillAbilityScore(List<SkillDTO> skillDTOs)
+        private static async Task AddSkillAbilityScore(List<InputSkillDTO> skillDTOs)
         {
             List<(Action<IDataTransferObject> assignmentResult, Type dtoType, string url)> dtosToLoad = new();
-            foreach(SkillDTO skillDTO in skillDTOs)
+            foreach(InputSkillDTO skillDTO in skillDTOs)
             {
                 string focusUrl = skillDTO.AbilityScore?.Url;
                 if(!string.IsNullOrEmpty(focusUrl))
                 {
                     dtosToLoad.Add((
-                        result => skillDTO.AbilityScoreDetailed = (DescriptionsDTO)result, 
-                        typeof(DescriptionsDTO), 
+                        result => skillDTO.AbilityScoreDetailed = (FullNameDescriptionsDTO)result, 
+                        typeof(FullNameDescriptionsDTO),
                         focusUrl
                         ));
                 }
@@ -781,8 +780,14 @@ namespace DndParser
             try
             {
                 ResultsDTO results_traits = await GetDTOAtUrl<ResultsDTO>(traitsUrl);
-                string response = await WebClient.GetDataAtURL(dndBaseUrl, results_traits.Results[0].Url);
-                Console.WriteLine($"Traits Details: {response}");
+                using (StreamWriter writer = new StreamWriter(filePath + "temp2" + ".txt", append: true))
+                {
+                    foreach(UrlDTO urlDTO in results_traits.Results)
+                    {
+                        string response = await WebClient.GetDataAtURL(dndBaseUrl, urlDTO.Url);
+                        writer.WriteLine(response);
+                    }
+                }
             }
             catch(Exception exception)
             {
